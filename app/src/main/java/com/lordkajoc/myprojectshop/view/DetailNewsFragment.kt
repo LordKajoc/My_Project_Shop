@@ -37,11 +37,11 @@ class DetailNewsFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModelDetail = ViewModelProvider(this)[ViewModelDetailNews::class.java]
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         val id = arguments?.getInt("ID")
         if (id != null) {
-            viewModelDetail.getNewsById(id)
-            observeDetailMovie()
+            viewModel.getNewsById(id)
+            observeDetailNews()
 //            setFavoriteListener()
 //            checkFavoriteMovie(id)
 
@@ -52,8 +52,8 @@ class DetailNewsFragment : Fragment() {
         }
     }
 
-    private fun observeDetailMovie() {
-        viewModelDetail.detailNews.observe(viewLifecycleOwner) {
+    private fun observeDetailNews() {
+        viewModel.detailNews.observe(viewLifecycleOwner) {
             binding.apply {
                 if (it != null) {
                     binding.tvNamanewsdetail.text = it.title.toString()

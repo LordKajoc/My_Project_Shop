@@ -16,27 +16,25 @@ class ViewModelDetailNews @Inject constructor(
     private val Client: ApiService
 ) : ViewModel() {
     private val liveDetailNews: MutableLiveData<DataDetailNewsItem?> = MutableLiveData()
-    val detailNews: LiveData <DataDetailNewsItem?> get() = liveDetailNews
+    val detailNews: LiveData<DataDetailNewsItem?> get() = liveDetailNews
 
     fun getNewsById(id: Int) {
-        Client.getDetailNews(id)
-            .enqueue(object : Callback<DataDetailNewsItem> {
-                override fun onResponse(
-                    call: Call<DataDetailNewsItem>,
-                    response: Response<DataDetailNewsItem>
-                ) {
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
-                        if (responseBody != null) {
-                            liveDetailNews.postValue(responseBody)
-                        }
+        Client.getDetailNews(id).enqueue(object : Callback<DataDetailNewsItem> {
+            override fun onResponse(
+                call: Call<DataDetailNewsItem>,
+                response: Response<DataDetailNewsItem>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        liveDetailNews.postValue(responseBody)
                     }
                 }
+            }
+            override fun onFailure(call: Call<DataDetailNewsItem>, t: Throwable) {
 
-                override fun onFailure(call: Call<DataDetailNewsItem>, t: Throwable) {
+            }
 
-                }
-
-            })
+        })
     }
 }

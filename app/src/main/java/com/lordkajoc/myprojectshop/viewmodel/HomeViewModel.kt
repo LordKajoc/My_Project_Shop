@@ -5,10 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.lordkajoc.myprojectshop.data.network.ApiService
 import com.lordkajoc.myprojectshop.data.network.RetrofitClient
-import com.lordkajoc.myprojectshop.model.DataDetailNewsItem
-import com.lordkajoc.myprojectshop.model.DataNewsResponseItem
-import com.lordkajoc.myprojectshop.model.DataSlidersResponse
-import com.lordkajoc.myprojectshop.model.DataSlidersResponseItem
+import com.lordkajoc.myprojectshop.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,34 +16,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val Client:ApiService): ViewModel() {
     private var livedataSlider :MutableLiveData<List<DataSlidersResponseItem>> = MutableLiveData()
     val dataSlider: LiveData<List<DataSlidersResponseItem>> get() = livedataSlider
-
-    private var livedataNews :MutableLiveData<List<DataNewsResponseItem>> = MutableLiveData()
-    val dataNews: LiveData<List<DataNewsResponseItem>> get() = livedataNews
-
-//    private var livedatadetailNews :MutableLiveData<List<DataDetailNewsItem>?> = MutableLiveData()
-//    val datadetailNews: LiveData<List<DataDetailNewsItem>?> get() = livedatadetailNews
-
-//    fun setSliderList() {
-//        sliderClient.getSliders()
-//            .enqueue(object : Callback<DataSlidersResponse> {
-//                override fun onResponse(
-//                    call: Call<DataSlidersResponse>,
-//                    response: Response<DataSlidersResponse>
-//                ) {
-//                    if (response.isSuccessful) {
-//                        val data = response.body()
-//                        if (data != null) {
-//                            livedataSlider.postValue(data.results as List<DataSlidersResponseItem>?)
-//                        }
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<DataSlidersResponse>, t: Throwable) {
-//
-//                }
-//
-//            })
-//    }
 
     fun getSlider(){
         //memakai callback yang retrofit
@@ -74,6 +43,9 @@ class HomeViewModel @Inject constructor(private val Client:ApiService): ViewMode
         })
     }
 
+
+    private var livedataNews :MutableLiveData<List<DataNewsResponseItem>> = MutableLiveData()
+    val dataNews: LiveData<List<DataNewsResponseItem>> get() = livedataNews
     fun getListNews(){
         //memakai callback yang retrofit
         Client.getNews().enqueue(object : Callback<List<DataNewsResponseItem>> {
@@ -84,44 +56,83 @@ class HomeViewModel @Inject constructor(private val Client:ApiService): ViewMode
             ) {
                 if (response.isSuccessful){
                     livedataNews.postValue(response.body())
-//                    val newsresponse = response.body()
-//                    liveDataNews.postValue(newsresponse!!)
                 }else{
                     livedataNews.postValue(emptyList())
-//                    liveDataNews.value = emptyList()
                 }
             }
 
             override fun onFailure(call: Call<List<DataNewsResponseItem>>, t: Throwable) {
                 livedataNews.postValue(emptyList())
-//                liveDataNews.value = emptyList()
             }
         })
     }
 
-//    fun getDetailNewsbyId(id:Int){
-//        //memakai callback yang retrofit
-//        Client.getDetailNews(id).enqueue(object : Callback<List<DataDetailNewsItem>> {
-//            override fun onResponse(
-//                call: Call<List<DataDetailNewsItem>>,
-//                response: Response<List<DataDetailNewsItem>>
-//
-//            ) {
-//                if (response.isSuccessful){
-//                    val responseBody = response.body()
-//                    if (responseBody != null) {
-//                        livedatadetailNews.postValue(responseBody)
-//                    }
-//                }else{
-//                    livedataNews.postValue(emptyList())
-////                    liveDataNews.value = emptyList()
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<List<DataDetailNewsItem>>, t: Throwable) {
-//                livedataNews.postValue(emptyList())
-////                liveDataNews.value = emptyList()
-//            }
-//        })
-//    }
+    private val liveDetailNews: MutableLiveData<DataDetailNewsItem?> = MutableLiveData()
+    val detailNews: LiveData<DataDetailNewsItem?> get() = liveDetailNews
+
+    fun getNewsById(id: Int) {
+        Client.getDetailNews(id).enqueue(object : Callback<DataDetailNewsItem> {
+            override fun onResponse(
+                call: Call<DataDetailNewsItem>,
+                response: Response<DataDetailNewsItem>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        liveDetailNews.postValue(responseBody)
+                    }
+                }
+            }
+            override fun onFailure(call: Call<DataDetailNewsItem>, t: Throwable) {
+
+            }
+
+        })
+    }
+
+    private var liveDataProduct :MutableLiveData<List<DataProductsResponseItem>> = MutableLiveData()
+    val dataProduct: LiveData<List<DataProductsResponseItem>> get() = liveDataProduct
+    fun getListProduct(){
+        //memakai callback yang retrofit
+        Client.getProduct().enqueue(object : Callback<List<DataProductsResponseItem>> {
+            override fun onResponse(
+                call: Call<List<DataProductsResponseItem>>,
+                response: Response<List<DataProductsResponseItem>>
+
+            ) {
+                if (response.isSuccessful){
+                    liveDataProduct.postValue(response.body())
+                }else{
+                    liveDataProduct.postValue(emptyList())
+                }
+            }
+
+            override fun onFailure(call: Call<List<DataProductsResponseItem>>, t: Throwable) {
+                liveDataProduct.postValue(emptyList())
+            }
+        })
+    }
+
+    private val liveDetailProduct: MutableLiveData<DataDetailProductItem?> = MutableLiveData()
+    val detailProduct: LiveData<DataDetailProductItem?> get() = liveDetailProduct
+
+    fun getProductById(id: Int) {
+        Client.getDetailProduct(id).enqueue(object : Callback<DataDetailProductItem> {
+            override fun onResponse(
+                call: Call<DataDetailProductItem>,
+                response: Response<DataDetailProductItem>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        liveDetailProduct.postValue(responseBody)
+                    }
+                }
+            }
+            override fun onFailure(call: Call<DataDetailProductItem>, t: Throwable) {
+
+            }
+
+        })
+    }
 }

@@ -13,6 +13,7 @@ import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentHomeBinding
 import com.lordkajoc.myprojectshop.model.DataSlidersResponseItem
 import com.lordkajoc.myprojectshop.view.adapter.NewsAdapter
+import com.lordkajoc.myprojectshop.view.adapter.ProductAdapter
 import com.lordkajoc.myprojectshop.view.adapter.SlidersAdapter
 import com.lordkajoc.myprojectshop.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +35,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         getSlider()
         getNews()
+        getProduct()
     }
     fun getSlider(){
         viewModelHomeVm = ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -53,6 +55,19 @@ class HomeFragment : Fragment() {
             }
         })
     }
+
+    fun getProduct(){
+        viewModelHomeVm = ViewModelProvider(this).get(HomeViewModel::class.java)
+        viewModelHomeVm.getListProduct()
+        viewModelHomeVm.dataProduct.observe(viewLifecycleOwner, Observer{
+            binding.rvListproducthome.layoutManager = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+            if (it!= null) {
+                binding.rvListproducthome.adapter = ProductAdapter(it)
+            }
+        })
+    }
+
+
 //    @SuppressLint("NotifyDataSetChanged")
 //    fun getNews(){
 //        viewModelHomeVm = ViewModelProvider(this).get(HomeVm::class.java)

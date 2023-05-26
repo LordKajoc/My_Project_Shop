@@ -17,13 +17,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/view_pager"
+        style="@style/textjudul"
         android:text="News" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_listnewshome"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/tv_newshome"/>
+
+    <TextView
+        android:id="@+id/tv_producthome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rv_listnewshome"
+        style="@style/textjudul"
+        android:text="Product" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_listproducthome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_producthome"/>
 
 
 </RelativeLayout>

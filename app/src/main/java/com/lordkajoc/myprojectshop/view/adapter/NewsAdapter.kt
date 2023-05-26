@@ -14,10 +14,8 @@ class NewsAdapter(private var listNews: List<DataNewsResponseItem>) :
     RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     class ViewHolder(var binding: ItemNewsBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val IMAGE_BASE = "https://image.tmdb.org/t/p/w500/"
-        fun bindFilms(itemNews: DataNewsResponseItem) {
+        fun bindNews(itemNews: DataNewsResponseItem) {
             binding.news = itemNews
-
             binding.cardView.setOnClickListener {
                 val bundle = Bundle().apply {
                     putInt("ID", itemNews.idNews.toString().toInt())
@@ -33,7 +31,7 @@ class NewsAdapter(private var listNews: List<DataNewsResponseItem>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindFilms(listNews[position])
+        holder.bindNews(listNews[position])
         Glide.with(holder.itemView).load(listNews[position].newsImage).into(holder.binding.imgNews)
     }
 
