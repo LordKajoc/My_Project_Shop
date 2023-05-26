@@ -1,5 +1,6 @@
 package com.lordkajoc.myprojectshop.data.network
 
+import com.lordkajoc.myprojectshop.model.DataDetailNewsItem
 import com.lordkajoc.myprojectshop.model.DataNewsResponseItem
 import com.lordkajoc.myprojectshop.model.DataSlidersResponse
 import com.lordkajoc.myprojectshop.model.DataSlidersResponseItem
@@ -13,8 +14,8 @@ interface ApiService {
     fun getSliders(): Call<List<DataSlidersResponseItem>>
 
     @GET("news_update")
-    fun getNews(): Call<DataNewsResponseItem>
+    fun getNews(): Call<List<DataNewsResponseItem>>
 
-    @GET("news_update/{id}")
-    fun getDetailNews(@Path("id") id:Int): Call<DataNewsResponseItem>
+    @GET("news_update/{id}?")
+    fun getDetailNews(@Path("id") id:Int): Call<DataDetailNewsItem>
 }
