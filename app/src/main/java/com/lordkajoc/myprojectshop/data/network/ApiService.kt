@@ -27,7 +27,7 @@ interface ApiService {
     fun getAllUser(): Call<List<DataUsersResponseItem>>
 
     @POST("users")
-    fun registerUser(@Body request: DataUsers): Call<DataUserPostItem>
+    fun registerUser(@Body request: DataUsers): Call<List<DataUserPostItem>>
 
 //    @PUT("users/{id}")
 //    fun updateUser(@Path("id") id : Int, @Body request: DataProfile): Call<PostUserResponse>
