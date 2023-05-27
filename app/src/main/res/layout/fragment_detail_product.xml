@@ -55,6 +55,15 @@
                 android:layout_below="@+id/tv_namaproductdetail"
                 android:text="Release" />
 
+
+            <TextView
+                android:id="@+id/tv_descriptionproductdetail"
+                style="@style/textbody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_releaseproductdetail"
+                android:text="Description" />
+
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

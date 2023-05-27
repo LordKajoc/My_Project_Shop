@@ -2,8 +2,7 @@ package com.lordkajoc.myprojectshop.data.network
 
 import com.lordkajoc.myprojectshop.model.*
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ApiService {
 
@@ -18,8 +17,19 @@ interface ApiService {
     fun getDetailNews(@Path("id") id:Int): Call<DataDetailNewsItem>
 
     //Get product and Detail on Click by Id
-    @GET("category_product")
-    fun getProduct(): Call<List<DataProductsResponseItem>>
-    @GET("category_product/{id}?")
+    @GET("category_product/4/products")
+    fun getProduct(): Call<List<DataProductResponseItem>>
+    @GET("category_product/4/products/{id}?")
     fun getDetailProduct(@Path("id") id:Int): Call<DataDetailProductItem>
+
+    //Get User and All Data User for profile
+    @GET("users")
+    fun getAllUser(): Call<List<DataUsersResponseItem>>
+
+    @POST("users")
+    fun registerUser(@Body request: DataUsers): Call<DataUserPostItem>
+
+//    @PUT("users/{id}")
+//    fun updateUser(@Path("id") id : Int, @Body request: DataProfile): Call<PostUserResponse>
+
 }

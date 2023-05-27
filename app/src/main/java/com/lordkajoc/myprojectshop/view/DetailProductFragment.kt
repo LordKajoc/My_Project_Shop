@@ -8,12 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.lordkajoc.myprojectshop.R
-import com.lordkajoc.myprojectshop.databinding.FragmentDetailNewsBinding
 import com.lordkajoc.myprojectshop.databinding.FragmentDetailProductBinding
 import com.lordkajoc.myprojectshop.model.DataNewsResponseItem
 import com.lordkajoc.myprojectshop.viewmodel.HomeViewModel
-import com.lordkajoc.myprojectshop.viewmodel.ViewModelDetailNews
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
 
@@ -22,8 +19,6 @@ class DetailProductFragment : Fragment() {
 
     private lateinit var binding: FragmentDetailProductBinding
     private lateinit var viewModel: HomeViewModel
-    private lateinit var viewModelDetail: ViewModelDetailNews
-    private lateinit var selectedNews: DataNewsResponseItem
     private var isFavorite by Delegates.notNull<Boolean>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +38,6 @@ class DetailProductFragment : Fragment() {
             observeDetailProduct()
 //            setFavoriteListener()
 //            checkFavoriteMovie(id)
-
             //test crashlytics
             binding.btnCrashdetail.setOnClickListener {
                 throw RuntimeException("Test Crash") // Force a crash
@@ -58,14 +52,14 @@ class DetailProductFragment : Fragment() {
                     binding.tvNamaproductdetail.text = it.name.toString()
                     binding.tvReleaseproductdetail.text = "Release: " + it.createdAt.toString()
                     Glide.with(requireContext())
-                        .load("${it.image}")
+                        .load("${it.productImage}")
                         .into(binding.ivProductimagedetail)
                     //        binding.tvSinopsisfilmdetail.text = """Overview:
 //            ${getfilm.overview}
 //        """.trimIndent()
-//                    binding.tvDetail.text = """Overview:
-//                        |
-//                    """.trimMargin() + it.content.toString()
+                    binding.tvDescriptionproductdetail.text = """Description:
+                        |
+                    """.trimMargin() + it.description.toString()
 //                    selectedMovie = FavoriteMovie(
 //                        it.id!!,
 //                        it.title!!,

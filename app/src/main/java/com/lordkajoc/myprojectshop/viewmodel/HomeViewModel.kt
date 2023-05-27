@@ -90,14 +90,14 @@ class HomeViewModel @Inject constructor(private val Client:ApiService): ViewMode
         })
     }
 
-    private var liveDataProduct :MutableLiveData<List<DataProductsResponseItem>> = MutableLiveData()
-    val dataProduct: LiveData<List<DataProductsResponseItem>> get() = liveDataProduct
+    private var liveDataProduct :MutableLiveData<List<DataProductResponseItem>> = MutableLiveData()
+    val dataProduct: LiveData<List<DataProductResponseItem>> get() = liveDataProduct
     fun getListProduct(){
         //memakai callback yang retrofit
-        Client.getProduct().enqueue(object : Callback<List<DataProductsResponseItem>> {
+        Client.getProduct().enqueue(object : Callback<List<DataProductResponseItem>> {
             override fun onResponse(
-                call: Call<List<DataProductsResponseItem>>,
-                response: Response<List<DataProductsResponseItem>>
+                call: Call<List<DataProductResponseItem>>,
+                response: Response<List<DataProductResponseItem>>
 
             ) {
                 if (response.isSuccessful){
@@ -107,7 +107,7 @@ class HomeViewModel @Inject constructor(private val Client:ApiService): ViewMode
                 }
             }
 
-            override fun onFailure(call: Call<List<DataProductsResponseItem>>, t: Throwable) {
+            override fun onFailure(call: Call<List<DataProductResponseItem>>, t: Throwable) {
                 liveDataProduct.postValue(emptyList())
             }
         })

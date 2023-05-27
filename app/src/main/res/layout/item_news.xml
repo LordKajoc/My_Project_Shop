@@ -41,7 +41,7 @@
             <TextView
                 android:id="@+id/tvTglNews"
                 android:text="@{news.createdAt}"
-                android:textColor="@color/teal_700"
+               style="@style/textbody"
                 android:layout_toRightOf="@+id/imgNews"
                 android:layout_below="@+id/tvJudulNews"
                 android:layout_width="wrap_content"
