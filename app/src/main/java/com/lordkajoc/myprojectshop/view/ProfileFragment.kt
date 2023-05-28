@@ -1,63 +1,88 @@
 package com.lordkajoc.myprojectshop.view
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.lordkajoc.myprojectshop.R
+import com.lordkajoc.myprojectshop.databinding.FragmentProfileBinding
+import com.lordkajoc.myprojectshop.model.DataUsersResponseItem
+import com.lordkajoc.myprojectshop.viewmodel.ProfileViewModel
+import com.lordkajoc.myprojectshop.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
+    private lateinit var binding: FragmentProfileBinding
+    lateinit var listuser: List<DataUsersResponseItem>
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var model : ProfileViewModel
+    private lateinit var oldPassword : String
+    private lateinit var id : String
+    //lateinit var firebaseAuth: FirebaseAuth
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        model = ViewModelProvider(this).get(ProfileViewModel::class.java)
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val name = sharedPreferences.getString("username","username")
+//        editor = share.edit()
+        id = sharedPreferences.getString("id", "").toString()
+
+        getDataProfile()
+//        binding.btnLogout.setOnClickListener {
+//            firebaseAuth = FirebaseAuth.getInstance()
+//            firebaseAuth.signOut()
+//            val addUser = sharedPreferences.edit()
+//            addUser.remove("nama")
+//            addUser.remove("tgl")
+//            addUser.remove("alamat")
+//            addUser.apply()
+//            Toast.makeText(context, "Keluar Berhasil", Toast.LENGTH_SHORT).show()
+//            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+//        }
+    }
+
+    fun getDataProfile() {
+        model.getProfileById(id)
+        model.dataUserProfile.observe(viewLifecycleOwner){
+            if (it != null){
+                binding.etUsernameprofile.setText(it.name)
+                binding.etAddressprofile.setText(it.email)
+                binding.etTgllahirprofile.setText(it.password)
+                oldPassword = it.password
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        getDataProfile()
     }
 }
+
+//    fun initData(userdatalist : List<DataUsersResponseItem>){
+//
+//        for (i in userdatalist.indices){
+//            binding.etUsernameprofile.setText(userdatalist[i].name)
+////            cnameProfile.setText(userdatalist[i].completeName)
+////            addressProfile.setText(userdatalist[i].address)
+////            birthdateProfile.setText(userdatalist[i].dateofbirth)
+//        }

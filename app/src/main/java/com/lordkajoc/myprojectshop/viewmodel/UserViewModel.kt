@@ -36,4 +36,27 @@ class UserViewModel @Inject constructor(private val Client: ApiService): ViewMod
             }
         })
     }
+
+    private var livedataUserLogin : MutableLiveData<List<DataUsersResponseItem>> = MutableLiveData()
+    val dataLoginUser: LiveData<List<DataUsersResponseItem>> get() = livedataUserLogin
+    fun UserLogin(){
+        //memakai callback yang retrofit
+        Client.getAllUser().enqueue(object : Callback<List<DataUsersResponseItem>> {
+            override fun onResponse(
+                call: Call<List<DataUsersResponseItem>>,
+                response: Response<List<DataUsersResponseItem>>
+
+            ) {
+                if (response.isSuccessful){
+                    livedataUserLogin.postValue(response.body())
+                }else{
+                    livedataUserLogin.postValue(emptyList())
+                }
+            }
+
+            override fun onFailure(call: Call<List<DataUsersResponseItem>>, t: Throwable) {
+                livedataUserLogin.postValue(emptyList())
+            }
+        })
+    }
 }
