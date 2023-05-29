@@ -3,6 +3,7 @@ package com.lordkajoc.myprojectshop.view.adapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,11 +17,10 @@ class ProductAdapter(private var listProduct: List<DataProductResponseItem>) :
     class ViewHolder(var binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindProduct(itemProduct: DataProductResponseItem) {
             binding.products = itemProduct
-            binding.cardView.setOnClickListener {
-                val bundle = Bundle().apply {
-                    putInt("ID", itemProduct.idProduct.toString().toInt())
-                }
-                it.findNavController().navigate(R.id.action_homeFragment_to_detailProductFragment, bundle)
+            binding.cardView.setOnClickListener{
+                val bundle = Bundle()
+                bundle.putSerializable("ID", itemProduct)
+                Navigation.findNavController(itemView).navigate(R.id.action_homeFragment_to_detailProductFragment, bundle)
             }
         }
     }

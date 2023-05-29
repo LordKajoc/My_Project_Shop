@@ -13,61 +13,55 @@ import javax.inject.Inject
 @HiltViewModel
 
 class FavoriteViewModel @Inject constructor(private val Client: ApiService) : ViewModel()  {
-    private var livedataFav : MutableLiveData<List<DataFav>> = MutableLiveData()
-    private var livedataPostFav : MutableLiveData<DataFav> = MutableLiveData()
-    private var livedataDeleteFav : MutableLiveData<DataFav> = MutableLiveData()
-    val dataPostFav: LiveData<DataFav> get() = livedataPostFav
-    val deleteFav: LiveData<DataFav> get() = livedataDeleteFav
     private val _IsFav: MutableLiveData<Boolean> = MutableLiveData()
     val isFav: LiveData<Boolean> get() = _IsFav
 
-    fun postFav(fav: DataFav){
+    private val liveDataPostFav: MutableLiveData<List<DataFavProductResponseItem>> = MutableLiveData()
+    val dataPostFav: LiveData<List<DataFavProductResponseItem>> get() = liveDataPostFav
+
+    fun postFav(userId:String, dataFav : DataFavProductResponseItem){
         //memakai callback yang retrofit
-        Client.getPostFavorite(fav).enqueue(object :
-            Callback<List<DataFav>> {
+        Client.getPostFavorite(userId,dataFav).enqueue(object : Callback<List<DataFavProductResponseItem>> {
             override fun onResponse(
-                call: Call<List<DataFav>>,
-                response: Response<List<DataFav>>
+                call: Call<List<DataFavProductResponseItem>>,
+                response: Response<List<DataFavProductResponseItem>>
 
             ) {
                 if (response.isSuccessful){
-                    livedataFav.postValue(response.body())
+                    liveDataPostFav.postValue(response.body())
                 }else{
-                    livedataFav.postValue(emptyList())
+                    liveDataPostFav.postValue(emptyList())
                 }
             }
 
-            override fun onFailure(call: Call<List<DataFav>>, t: Throwable) {
-                livedataFav.postValue(emptyList())
+            override fun onFailure(call: Call<List<DataFavProductResponseItem>>, t: Throwable) {
+                liveDataPostFav.postValue(emptyList())
             }
         })
     }
 
-    fun deleteFav(id: Int){
-        //memakai callback yang retrofit
-        Client.getDeleteFav(id.toString()).enqueue(object :
-            Callback<List<DataFav>> {
-            override fun onResponse(
-                call: Call<List<DataFav>>,
-                response: Response<List<DataFav>>
 
-            ) {
+    private val liveDataDeleteFav: MutableLiveData<String?> = MutableLiveData()
+    val dataDeleteFav: LiveData<String?> get() = liveDataDeleteFav
+    fun deleteFav(userId: String,idProduct:String){
+        //memakai callback yang retrofit
+        Client.getDeleteFavorite(userId,idProduct).enqueue(object : Callback<String>{
+            override fun onResponse(call: Call<String>, response: Response<String>) {
                 if (response.isSuccessful){
-                    livedataFav.postValue(response.body())
+                    liveDataDeleteFav.postValue(response.body())
                 }else{
-                    livedataFav.postValue(emptyList())
+                    liveDataDeleteFav.postValue(null)
                 }
             }
-
-            override fun onFailure(call: Call<List<DataFav>>, t: Throwable) {
-                livedataFav.postValue(emptyList())
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                liveDataDeleteFav.postValue(null)
             }
         })
     }
 
-    fun isCheck(id: Int){
+    fun isCheck(id: String){
         //memakai callback yang retrofit
-        Client.check(id.toString()).enqueue(object :
+        Client.check(id).enqueue(object :
             Callback<Boolean> {
             override fun onResponse(
                 call: Call<Boolean>,
@@ -77,12 +71,12 @@ class FavoriteViewModel @Inject constructor(private val Client: ApiService) : Vi
                 if (response.isSuccessful){
                     _IsFav.postValue(response.body())
                 }else{
-                    livedataFav.postValue(emptyList())
+                    _IsFav.postValue(false)
                 }
             }
 
             override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                livedataFav.postValue(emptyList())
+                _IsFav.postValue(false)
             }
         })
     }
