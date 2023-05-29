@@ -65,24 +65,38 @@
                 android:layout_below="@+id/tv_releaseproductdetail"
                 android:text="Description" />
 
+
+
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/ic_cart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/white"
+        android:contentDescription="fav"
+        android:src="@drawable/baseline_add_shopping_cart_24"
+        app:backgroundTint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/ic_fav"
         android:layout_width="wrap_content"
-        android:src="@drawable/ic_favorite_outline"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:backgroundTint="@color/white"
-        android:contentDescription="fav"
+        android:contentDescription="cart"
+        android:src="@drawable/ic_favorite_outline"
         app:backgroundTint="@color/white" />
-
-
 
     <Button
         android:id="@+id/btn_crashdetail"
