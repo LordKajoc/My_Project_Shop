@@ -77,19 +77,30 @@ class LoginFragment : Fragment() {
                 ) {
                     if (response.isSuccessful){
                         val resBody = response.body()
+                        var loginSuccessful = false
+                        var a = 1
                         if (resBody != null){
                             Log.d(tag,"RESPONSE : ${resBody.toString()}")
                             for (i in 0 until resBody.size) {
-                                if(resBody[i].email.equals(email) && resBody[i].password.equals(password)) {
+                                val tampung : Boolean = (resBody[i].email.equals(email) && resBody[i].password.equals(password)) == true
+
+                                if (tampung) {
+                                    // ...
+                                    loginSuccessful = true // Set variabel loginSuccessful menjadi true
+                                    break // Keluar dari loop setelah login berhasil
+                                    a = i
+                                }
+                            }
+                                    if(loginSuccessful) {
                                     var addData = sharepref.edit()
-                                    addData.putString("email", resBody[i].email)
-                                    addData.putString("username",resBody[i].name)
-                                    addData.putString("password",resBody[i].password)
-                                    addData.putString("id",resBody[i].idUsers)
+                                    addData.putString("email", resBody[a].email)
+                                    addData.putString("username",resBody[a].name)
+                                    addData.putString("password",resBody[a].password)
+                                    addData.putString("id",resBody[a].idUsers)
                                     addData.apply()
                                     // Clear error text
-                                    //binding.etPasswordlogin.error = null
-                                    //binding.etEmaillogin.error = null
+                                    binding.etPasswordlogin.error = null
+                                    binding.etEmaillogin.error = null
 
                                     Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment)
                                     Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
@@ -99,9 +110,8 @@ class LoginFragment : Fragment() {
                                     binding.etEmaillogin.error ="Email Tidak Sesuai"
                                     Toast.makeText(context, "Invalid Username or Password", Toast.LENGTH_SHORT).show()
                                 }
-                                break
                             }
-                        }
+
                     }else{
                         Toast.makeText(context, "Gagal Load Data", Toast.LENGTH_SHORT).show()
                     }

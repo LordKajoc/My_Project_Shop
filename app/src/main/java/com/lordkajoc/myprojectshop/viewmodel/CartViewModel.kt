@@ -36,4 +36,24 @@ class CartViewModel@Inject constructor(private val Client: ApiService) : ViewMod
             }
         })
     }
+
+    fun getCart(){
+        Client.getCart().enqueue(object : Callback<List<DataCart>> {
+            override fun onResponse(
+                call: Call<List<DataCart>>,
+                response: Response<List<DataCart>>
+            ) {
+                if (response.isSuccessful){
+                    liveDataCart.postValue(response.body())
+                }else{
+                    liveDataCart.postValue(emptyList())
+                }
+            }
+
+            override fun onFailure(call: Call<List<DataCart>>, t: Throwable) {
+                liveDataCart.postValue(emptyList())
+            }
+
+        })
+    }
 }

@@ -1,6 +1,5 @@
 package com.lordkajoc.myprojectshop.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,10 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentHomeBinding
-import com.lordkajoc.myprojectshop.model.DataSlidersResponseItem
 import com.lordkajoc.myprojectshop.view.adapter.NewsAdapter
 import com.lordkajoc.myprojectshop.view.adapter.ProductAdapter
 import com.lordkajoc.myprojectshop.view.adapter.SlidersAdapter
@@ -36,6 +36,9 @@ class HomeFragment : Fragment() {
         getSlider()
         getNews()
         getProduct()
+        binding.tocart.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_cartFragment)
+        }
     }
     fun getSlider(){
         viewModelHomeVm = ViewModelProvider(this).get(HomeViewModel::class.java)

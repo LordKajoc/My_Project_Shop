@@ -8,6 +8,7 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
+        android:layout_below="@id/tocart"
         android:layout_width="match_parent"
         android:layout_height="150dp" />
 
@@ -39,6 +40,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_producthome"/>
+
+    <ImageView
+        android:id="@+id/tocart"
+        android:src="@drawable/baseline_add_shopping_cart_24"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 
 </RelativeLayout>

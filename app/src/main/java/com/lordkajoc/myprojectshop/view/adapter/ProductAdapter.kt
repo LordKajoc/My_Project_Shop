@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.ItemProductBinding
+import com.lordkajoc.myprojectshop.model.DataCart
 import com.lordkajoc.myprojectshop.model.DataProductResponseItem
 
 class ProductAdapter(private var listProduct: List<DataProductResponseItem>) :

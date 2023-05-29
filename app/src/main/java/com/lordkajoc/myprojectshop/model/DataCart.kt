@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class DataCart (
+    @SerializedName("id_cart")
+    val idCart: String,
     @SerializedName("name")
     val name: String,
     @SerializedName("price")

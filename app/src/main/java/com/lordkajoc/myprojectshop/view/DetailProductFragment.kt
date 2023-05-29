@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentDetailProductBinding
@@ -82,6 +83,7 @@ class DetailProductFragment : Fragment() {
                         it.productImage!!
                     )
                     selectedCart = DataCart(
+                        it.idProduct!!,
                         it.name!!,
                         it.price!!,
                         it.productImage!!
@@ -167,6 +169,7 @@ class DetailProductFragment : Fragment() {
         binding.icCart.apply {
             setOnClickListener {
                 addToCart(selectedCart)
+//                findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment)
             }
         }
     }

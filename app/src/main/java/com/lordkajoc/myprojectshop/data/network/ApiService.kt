@@ -46,4 +46,7 @@ interface ApiService {
 
     @POST("users/99/cart")
     fun postCart(@Body request: DataCart) : Call <List<DataCart>>
+
+    @GET("user/99/cart")
+    fun getCart(): Call<List<DataCart>>
 }
