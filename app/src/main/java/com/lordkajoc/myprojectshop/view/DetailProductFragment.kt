@@ -2,6 +2,7 @@ package com.lordkajoc.myprojectshop.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.provider.ContactsContract.Data
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,9 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentDetailProductBinding
+import com.lordkajoc.myprojectshop.model.DataCart
 import com.lordkajoc.myprojectshop.model.DataDetailProductItem
 import com.lordkajoc.myprojectshop.model.DataFav
 import com.lordkajoc.myprojectshop.model.DataNewsResponseItem
+import com.lordkajoc.myprojectshop.viewmodel.CartViewModel
 import com.lordkajoc.myprojectshop.viewmodel.FavoriteViewModel
 import com.lordkajoc.myprojectshop.viewmodel.HomeViewModel
 import com.lordkajoc.myprojectshop.viewmodel.UserViewModel
@@ -27,6 +30,8 @@ class DetailProductFragment : Fragment() {
     private lateinit var binding: FragmentDetailProductBinding
     private lateinit var viewModel: HomeViewModel
     private lateinit var favViewModel: FavoriteViewModel
+    private lateinit var cartViewModel: CartViewModel
+    private lateinit var selectedCart : DataCart
     private lateinit var selectedProduct: DataFav
     private var isFavorite by Delegates.notNull<Boolean>()
     override fun onCreateView(
@@ -48,6 +53,7 @@ class DetailProductFragment : Fragment() {
             observeDetailProduct()
             setFavoriteListener()
             checkFavorite(id)
+            getPostCart()
             //test crashlytics
             binding.btnCrashdetail.setOnClickListener {
                 throw RuntimeException("Test Crash") // Force a crash
@@ -75,6 +81,11 @@ class DetailProductFragment : Fragment() {
                         it.price!!,
                         it.productImage!!
                     )
+                    selectedCart = DataCart(
+                        it.name!!,
+                        it.price!!,
+                        it.productImage!!
+                    )
                 }
             }
         }
@@ -84,8 +95,9 @@ class DetailProductFragment : Fragment() {
         isFavorite = true
         binding.icFav.apply {
             setOnClickListener {
-                isFavorite = if (!isFavorite) {
-                    addToFavorite()
+                isFavorite =
+                    if (!isFavorite) {
+                    addToFavorite(selectedProduct)
                     binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
                     true
                 } else {
@@ -98,11 +110,8 @@ class DetailProductFragment : Fragment() {
     }
 
 //    private lateinit var id : String
-    private fun addToFavorite() {
-        val name = binding.tvNamaproductdetail.text.toString()
-        val price = binding.tvReleaseproductdetail.text.toString()
-        val image = binding.tvDescriptionproductdetail.text.toString()
-        favViewModel.postFav(name, price, image)
+    private fun addToFavorite(fav : DataFav) {
+        favViewModel.postFav(fav)
         favViewModel.dataPostFav.observe(viewLifecycleOwner) {
             if (it != null) {
                 Toast.makeText(requireContext(), "Sukses tambah favorit", Toast.LENGTH_SHORT).show()
@@ -139,6 +148,25 @@ class DetailProductFragment : Fragment() {
                 }
             } else {
                 Log.d("CHECK_FAV", "checkFavoriteMovie: $it")
+            }
+        }
+    }
+    private fun addToCart(cart: DataCart){
+        cartViewModel = ViewModelProvider(this).get(CartViewModel::class.java)
+        cartViewModel.postCart(cart)
+        cartViewModel.dataCart.observe(viewLifecycleOwner) {
+            if (it != null) {
+                Toast.makeText(requireContext(), "Sukses tambah favorit", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Failed menambah favorit", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+    private fun getPostCart(){
+        binding.icCart.apply {
+            setOnClickListener {
+                addToCart(selectedCart)
             }
         }
     }
