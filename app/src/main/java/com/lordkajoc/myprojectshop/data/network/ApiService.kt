@@ -35,4 +35,12 @@ interface ApiService {
 //    @PUT("users/{id}")
 //    fun updateUser(@Path("id") id : Int, @Body request: DataProfile): Call<PostUserResponse>
 
+    @POST("users/{id}/favourite")
+    fun getPostFavorite(@Body request: DataFav): Call<List<DataFav>>
+
+    @DELETE("users/{id}/favourite/{id}")
+    fun getDeleteFav(@Path("id") id:String): Call<List<DataFav>>
+
+    @GET("users/{id}/favourite/{id}")
+    fun check(@Path("id") id: String): Call<List<DataFav>>
 }
