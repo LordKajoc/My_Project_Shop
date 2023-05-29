@@ -88,8 +88,8 @@ class LoginFragment : Fragment() {
                                     addData.putString("id",resBody[i].idUsers)
                                     addData.apply()
                                     // Clear error text
-                                    binding.etPasswordlogin.error = null
-                                    binding.etEmaillogin.error = null
+                                    //binding.etPasswordlogin.error = null
+                                    //binding.etEmaillogin.error = null
 
                                     Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment)
                                     Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
@@ -99,6 +99,7 @@ class LoginFragment : Fragment() {
                                     binding.etEmaillogin.error ="Email Tidak Sesuai"
                                     Toast.makeText(context, "Invalid Username or Password", Toast.LENGTH_SHORT).show()
                                 }
+                                break
                             }
                         }
                     }else{
