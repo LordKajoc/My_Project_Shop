@@ -3,6 +3,7 @@ package com.lordkajoc.myprojectshop.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class DataUsersResponseItem(
     @SerializedName("createdAt")
@@ -17,4 +18,4 @@ data class DataUsersResponseItem(
     val name: String,
     @SerializedName("password")
     val password: String
-)
+): Serializable

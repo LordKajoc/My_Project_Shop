@@ -1,8 +1,9 @@
 package com.lordkajoc.myprojectshop.view
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.provider.ContactsContract.Data
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,12 +17,12 @@ import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentDetailProductBinding
 import com.lordkajoc.myprojectshop.model.DataCart
 import com.lordkajoc.myprojectshop.model.DataDetailProductItem
-import com.lordkajoc.myprojectshop.model.DataFav
-import com.lordkajoc.myprojectshop.model.DataNewsResponseItem
+import com.lordkajoc.myprojectshop.model.DataFavProductResponseItem
+import com.lordkajoc.myprojectshop.model.DataProductResponseItem
 import com.lordkajoc.myprojectshop.viewmodel.CartViewModel
 import com.lordkajoc.myprojectshop.viewmodel.FavoriteViewModel
 import com.lordkajoc.myprojectshop.viewmodel.HomeViewModel
-import com.lordkajoc.myprojectshop.viewmodel.UserViewModel
+import com.lordkajoc.myprojectshop.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
 
@@ -32,8 +33,14 @@ class DetailProductFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var favViewModel: FavoriteViewModel
     private lateinit var cartViewModel: CartViewModel
+    private lateinit var profileViewModel : ProfileViewModel
+    private lateinit var idUser :String
+    private lateinit var idProduct :String
+    private lateinit var sharedPreferences: SharedPreferences
+
     private lateinit var selectedCart : DataCart
-    private lateinit var selectedProduct: DataFav
+    private lateinit var selectedProduct: DataFavProductResponseItem
+    private lateinit var dataFav :DataFavProductResponseItem
     private var isFavorite by Delegates.notNull<Boolean>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,12 +55,15 @@ class DetailProductFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         favViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        val id = arguments?.getInt("ID")
-        if (id != null) {
-            viewModel.getProductById(id)
+        profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+
+        var getData = arguments?.getSerializable("ID") as DataProductResponseItem
+        idProduct = getData.idProduct
+        binding.tvDetail.text = idProduct
+        if (idProduct != null) {
+            viewModel.getProductById(idProduct)
             observeDetailProduct()
-            setFavoriteListener()
-            checkFavorite(id)
+            checkFavorite(idProduct)
             getPostCart()
             //test crashlytics
             binding.btnCrashdetail.setOnClickListener {
@@ -77,11 +87,19 @@ class DetailProductFragment : Fragment() {
                     binding.tvDescriptionproductdetail.text = """Description:
                         |
                     """.trimMargin() + it.description.toString()
-                    selectedProduct = DataFav(
+
+                    sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+                    idUser = sharedPreferences.getString("id","").toString()
+                    selectedProduct = DataFavProductResponseItem(
+                        it.createdAt!!,
+                        it.description!!,
+                        it.idProduct!!,
                         it.name!!,
                         it.price!!,
-                        it.productImage!!
+                        it.productImage!!,
+                        idUser
                     )
+                    setFavoriteListener(idProduct, selectedProduct)
                     selectedCart = DataCart(
                         it.idProduct!!,
                         it.name!!,
@@ -93,17 +111,22 @@ class DetailProductFragment : Fragment() {
         }
     }
 
-    private fun setFavoriteListener() {
-        isFavorite = true
+//    fun getDataProfile() {
+//        profileViewModel.getProfileById(idUser)
+//    }
+
+    private fun setFavoriteListener(idProduct:String,fav : DataFavProductResponseItem) {
+        isFavorite = false
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
         binding.icFav.apply {
             setOnClickListener {
                 isFavorite =
                     if (!isFavorite) {
-                    addToFavorite(selectedProduct)
+                    addToFavorite(sharedPreferences.getString("id", "").toString(), fav)
                     binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
                     true
                 } else {
-                    deleteFromFavorite(id)
+                    deleteFromFavorite(sharedPreferences.getString("id", "").toString(),idProduct)
                     binding.icFav.setImageResource(R.drawable.ic_favorite_outline)
                     false
                 }
@@ -112,8 +135,8 @@ class DetailProductFragment : Fragment() {
     }
 
 //    private lateinit var id : String
-    private fun addToFavorite(fav : DataFav) {
-        favViewModel.postFav(fav)
+    private fun addToFavorite(userId:String, fav : DataFavProductResponseItem) {
+        favViewModel.postFav(userId,fav)
         favViewModel.dataPostFav.observe(viewLifecycleOwner) {
             if (it != null) {
                 Toast.makeText(requireContext(), "Sukses tambah favorit", Toast.LENGTH_SHORT).show()
@@ -124,20 +147,20 @@ class DetailProductFragment : Fragment() {
         }
     }
 
-    private fun deleteFromFavorite(id: Int) {
-        favViewModel.deleteFav(id)
-        favViewModel.deleteFav.observe(viewLifecycleOwner) {
+    private fun deleteFromFavorite(userId: String, idProduct:String) {
+        favViewModel.deleteFav(userId,idProduct)
+        favViewModel.dataDeleteFav.observe(viewLifecycleOwner) {
             if (it != null) {
                 Toast.makeText(requireContext(), "Sukses menghapus favorit", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                Toast.makeText(requireContext(), "Failed menghapus favorit", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Gagal menghapus favorit", Toast.LENGTH_SHORT)
                     .show()
             }
         }
     }
 
-    private fun checkFavorite(id: Int) {
+    private fun checkFavorite(id: String) {
         favViewModel.isCheck(id)
        favViewModel.isFav.observe(viewLifecycleOwner) {
             if (it != null) {

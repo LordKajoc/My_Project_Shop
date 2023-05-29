@@ -16,9 +16,9 @@ class UserViewModel @Inject constructor(private val Client: ApiService): ViewMod
 
     private var livedataUser : MutableLiveData<List<DataUserPostItem>> = MutableLiveData()
     val dataPostUser: LiveData<List<DataUserPostItem>> get() = livedataUser
-    fun postUserRegister(email: String, name: String, password: String){
+    fun postUserRegister(dataUsers:DataUsersResponseItem){
         //memakai callback yang retrofit
-        Client.registerUser(DataUsers(email, "",name,password)).enqueue(object : Callback<List<DataUserPostItem>> {
+        Client.registerUser(dataUsers).enqueue(object : Callback<List<DataUserPostItem>> {
             override fun onResponse(
                 call: Call<List<DataUserPostItem>>,
                 response: Response<List<DataUserPostItem>>
