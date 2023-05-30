@@ -47,16 +47,14 @@ interface ApiService {
         @Path("idProduct") idProduct : String
     ) : Call<String>
 
-    @GET("users/{id}/favourite")
-    fun getFav(): Call<List<DataFavProductResponseItem>>
-
     @GET("users/99/favourite/{id}")
     fun check(@Path("id") id: String): Call<Boolean>
 
     @POST("users/{id}/cart")
-    fun postCart(@Path("id") id:String,
-                 @Body request: DataDetailProductItem) : Call <List<DataCart>>
+    fun postCart(
+        @Path("id") id: String,
+        @Body request: DataDetailProductItem) : Call <List<DataCartResponseItem>>
 
-    @GET("users/{id}/cart")
-    fun getCart(@Path("id")id:String): Call<List<DataCart>>
+    @GET("user/99/cart")
+    fun getCart(): Call<List<DataCartResponseItem>>
 }

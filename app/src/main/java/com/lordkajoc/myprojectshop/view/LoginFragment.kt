@@ -33,7 +33,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
     private lateinit var userVM: UserViewModel
-    lateinit var sharepref : SharedPreferences
+    lateinit var sharepref: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,17 +48,17 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         userVM = ViewModelProvider(this).get(UserViewModel::class.java)
 
-        sharepref = requireContext().getSharedPreferences("LOGGED_IN" , Context.MODE_PRIVATE)
+        sharepref = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
 
         binding.btnLogin.setOnClickListener {
 //            val email = binding.etEmaillogin.text.toString()
 //            val password = binding.etPasswordlogin.text.toString()
 //            auth(email,password)
-            if (binding.etEmaillogin.text.toString().isEmpty()){
+            if (binding.etEmaillogin.text.toString().isEmpty()) {
                 binding.etEmaillogin.setError("Isi Username")
-            }else if(binding.etPasswordlogin.text.toString().isEmpty()){
+            } else if (binding.etPasswordlogin.text.toString().isEmpty()) {
                 binding.etPasswordlogin.setError("Isi Password")
-            }else{
+            } else {
                 forLogin()
             }
         }
@@ -125,8 +125,8 @@ class LoginFragment : Fragment() {
 //    }
 
 
-    lateinit var listuserlogin : List<DataUsersResponseItem>
-    private fun forLogin(){
+    lateinit var listuserlogin: List<DataUsersResponseItem>
+    private fun forLogin() {
         userVM = ViewModelProvider(this).get(UserViewModel::class.java)
         userVM.dataLoginUser.observe(viewLifecycleOwner, Observer {
             listuserlogin = it
@@ -135,7 +135,7 @@ class LoginFragment : Fragment() {
         userVM.UserLogin()
     }
 
-    private fun loginAuth(userDataList : List<DataUsersResponseItem>) {
+    private fun loginAuth(userDataList: List<DataUsersResponseItem>) {
         //make shared preference that saving log in activity history
         sharepref = requireActivity().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
 
@@ -144,20 +144,20 @@ class LoginFragment : Fragment() {
         val inputPassword = binding.etPasswordlogin.text.toString()
 
         //checking email and password of user to authenticate
-        for(i in userDataList.indices){
-            if(inputPassword == userDataList[i].password && inputEmail == userDataList[i].email){
+        for (i in userDataList.indices) {
+            if (inputPassword == userDataList[i].password && inputEmail == userDataList[i].email) {
                 Toast.makeText(requireContext(), "Berhasil login", Toast.LENGTH_SHORT).show()
                 //bundling all information about user
                 navigationBundlingSf(userDataList[i])
                 break
-            }
-            if(i == userDataList.lastIndex && inputPassword != userDataList[i].password && inputEmail != userDataList[i].email){
-                Toast.makeText(requireContext(), "Gagal login", Toast.LENGTH_SHORT).show()
+            } else if (i == userDataList.lastIndex && inputPassword != userDataList[i].password && inputEmail != userDataList[i].email) {
+                binding.etPasswordlogin.error = "Password Tidak Sesuai"
+                binding.etEmaillogin.error = "Email Tidak Sesuai"
             }
         }
     }
 
-    private fun navigationBundlingSf(currentUser: DataUsersResponseItem){
+    private fun navigationBundlingSf(currentUser: DataUsersResponseItem) {
         sharepref = requireActivity().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
         //shared pref to save log in history
         val sharedPref = sharepref.edit()
