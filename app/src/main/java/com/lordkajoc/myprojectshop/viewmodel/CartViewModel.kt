@@ -39,8 +39,8 @@ class CartViewModel@Inject constructor(private val Client: ApiService) : ViewMod
         })
     }
 
-    fun getCart(){
-        Client.getCart().enqueue(object : Callback<List<DataCartResponseItem>> {
+    fun getCart(userId:String){
+        Client.getCart(userId).enqueue(object : Callback<List<DataCartResponseItem>> {
             override fun onResponse(
                 call: Call<List<DataCartResponseItem>>,
                 response: Response<List<DataCartResponseItem>>

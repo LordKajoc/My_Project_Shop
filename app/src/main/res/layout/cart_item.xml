@@ -5,7 +5,7 @@
     <data>
         <variable
             name="cart"
-            type="com.lordkajoc.myprojectshop.model.DataCart" />
+            type="com.lordkajoc.myprojectshop.model.DataCartResponseItem" />
     </data>
 
     <androidx.cardview.widget.CardView

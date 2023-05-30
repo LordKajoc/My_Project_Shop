@@ -100,27 +100,6 @@ class FavoriteViewModel @Inject constructor(private val Client: ApiService) : Vi
             }
         })
     }
-    fun getFav(){
-        //memakai callback yang retrofit
-        Client.getFav().enqueue(object : Callback<List<DataFavProductResponseItem>> {
-            override fun onResponse(
-                call: Call<List<DataFavProductResponseItem>>,
-                response: Response<List<DataFavProductResponseItem>>
-
-            ) {
-                if (response.isSuccessful){
-                    liveDataPostFav.postValue(response.body())
-                }else{
-                    liveDataPostFav.postValue(emptyList())
-                }
-            }
-
-            override fun onFailure(call: Call<List<DataFavProductResponseItem>>, t: Throwable) {
-                liveDataPostFav.postValue(emptyList())
-            }
-        })
-    }
-
 
 
 }
