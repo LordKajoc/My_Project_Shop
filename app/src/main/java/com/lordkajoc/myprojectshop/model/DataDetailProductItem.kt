@@ -1,6 +1,7 @@
 package com.lordkajoc.myprojectshop.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class DataDetailProductItem(
     @SerializedName("category_productId")
@@ -17,4 +18,4 @@ data class DataDetailProductItem(
     val price: String? = null,
     @SerializedName("product_image")
     val productImage: String? = null
-)
+) : Serializable

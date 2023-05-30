@@ -71,11 +71,6 @@ class ProfileFragment : Fragment() {
             }
         }
     }
-
-    override fun onStart() {
-        super.onStart()
-        getDataProfile()
-    }
 }
 
 //    fun initData(userdatalist : List<DataUsersResponseItem>){
