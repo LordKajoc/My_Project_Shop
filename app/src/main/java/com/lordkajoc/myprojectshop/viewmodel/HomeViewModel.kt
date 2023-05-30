@@ -116,7 +116,7 @@ class HomeViewModel @Inject constructor(private val Client:ApiService): ViewMode
     private val liveDetailProduct: MutableLiveData<DataDetailProductItem?> = MutableLiveData()
     val detailProduct: LiveData<DataDetailProductItem?> get() = liveDetailProduct
 
-    fun getProductById(id: Int) {
+    fun getProductById(id: String) {
         Client.getDetailProduct(id).enqueue(object : Callback<DataDetailProductItem> {
             override fun onResponse(
                 call: Call<DataDetailProductItem>,
