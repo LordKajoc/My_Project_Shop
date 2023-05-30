@@ -3,8 +3,10 @@ package com.lordkajoc.myprojectshop.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.play.integrity.internal.t
 import com.lordkajoc.myprojectshop.data.network.ApiService
 import com.lordkajoc.myprojectshop.model.DataCart
+import com.lordkajoc.myprojectshop.model.DataDetailProductItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -15,9 +17,9 @@ class CartViewModel@Inject constructor(private val Client: ApiService) : ViewMod
     private var liveDataCart: MutableLiveData<List<DataCart>> = MutableLiveData()
     val dataCart : LiveData<List<DataCart>> get() = liveDataCart
 
-    fun postCart(cart: DataCart){
+    fun postCart(id:String,cart: DataDetailProductItem){
         //memakai callback yang retrofit
-        Client.postCart(cart).enqueue(object :
+        Client.postCart(id,cart).enqueue(object :
             Callback<List<DataCart>> {
             override fun onResponse(
                 call: Call<List<DataCart>>,
@@ -37,8 +39,8 @@ class CartViewModel@Inject constructor(private val Client: ApiService) : ViewMod
         })
     }
 
-    fun getCart(){
-        Client.getCart().enqueue(object : Callback<List<DataCart>> {
+    fun getCart(userId: String){
+        Client.getCart(userId).enqueue(object : Callback<List<DataCart>> {
             override fun onResponse(
                 call: Call<List<DataCart>>,
                 response: Response<List<DataCart>>

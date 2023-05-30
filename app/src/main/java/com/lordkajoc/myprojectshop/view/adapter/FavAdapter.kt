@@ -32,7 +32,7 @@ class FavAdapter(private var listFav: List<DataFavProductResponseItem>) :
     }
 
     override fun getItemCount(): Int {
-    return listFav.size
+        return listFav.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

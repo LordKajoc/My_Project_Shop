@@ -53,7 +53,7 @@ class CartFragment : Fragment() {
         vmCart.dataCart.observe(viewLifecycleOwner, Observer{
             binding.rvCart.layoutManager = LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL,false)
-                binding.rvCart.adapter = CartAdapter(it)
+            binding.rvCart.adapter = CartAdapter(it)
         })
     }
 
