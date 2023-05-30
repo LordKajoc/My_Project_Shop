@@ -35,26 +35,35 @@ interface ApiService {
 //    @PUT("users/{id}")
 //    fun updateUser(@Path("id") id : Int, @Body request: DataProfile): Call<PostUserResponse>
 
-    @POST("user/{id}?/favourite")
+    @POST("users/{id}/favourite")
     fun getPostFavorite(
         @Path("id") userId: String,
-        @Body request : DataFavProductResponseItem
+        @Body request : DataDetailProductItem
     ) : Call<List<DataFavProductResponseItem>>
 
-    @DELETE("user/{id}/favourite/{idProduct}")
-    fun getDeleteFavorite(
-        @Path("id") userId : String,
-        @Path("idProduct") idProduct : String
-    ) : Call<String>
+    @GET("users/{id}/favourite")
+    fun getFavorite(@Path("id") userId: String,
+    ) : Call<List<DataFavProductResponseItem>>
 
-    @GET("users/99/favourite/{id}")
-    fun check(@Path("id") id: String): Call<Boolean>
+    @DELETE("users/99/favourite/{idFav}")
+    fun getDeleteFavorite(
+//        @Path("id") userId : String,
+        @Path("idFav") idFav : String
+    ) : Call<Unit>
+
+    @GET("users/99/favourite/{idFav}")
+    fun checkFav(
+//        @Path("id") userId : String,
+        @Path("idFav") idFav : String
+    ) : Call<Boolean>
 
     @POST("users/{id}/cart")
     fun postCart(
         @Path("id") id: String,
         @Body request: DataDetailProductItem) : Call <List<DataCartResponseItem>>
 
-    @GET("user/99/cart")
-    fun getCart(): Call<List<DataCartResponseItem>>
+    @GET("users/{id}/cart")
+    fun getCart(
+        @Path("id") id: String
+    ): Call<List<DataCartResponseItem>>
 }

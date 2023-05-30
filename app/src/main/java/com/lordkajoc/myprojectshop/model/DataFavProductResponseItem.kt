@@ -1,9 +1,12 @@
 package com.lordkajoc.myprojectshop.model
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 
+@Parcelize
 data class DataFavProductResponseItem(
     @SerializedName("createdAt")
     val createdAt: String,
@@ -19,4 +22,4 @@ data class DataFavProductResponseItem(
     val productImage: String,
     @SerializedName("userId")
     val userId: String
-): Serializable
+): Parcelable

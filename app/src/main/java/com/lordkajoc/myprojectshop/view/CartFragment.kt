@@ -1,5 +1,7 @@
 package com.lordkajoc.myprojectshop.view
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,7 +20,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class CartFragment : Fragment() {
     lateinit var binding: FragmentCartBinding
     private lateinit var vmCart : CartViewModel
-    private lateinit var id : String
+    private lateinit var idUser : String
+    private lateinit var sharedPreferences: SharedPreferences
 
 
     override fun onCreateView(
@@ -32,12 +35,14 @@ class CartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getDataCart()
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        idUser = sharedPreferences.getString("id","").toString()
+        getDataCart(idUser)
     }
 
-    fun getDataCart(){
+    fun getDataCart(userId:String){
         vmCart = ViewModelProvider(this).get(CartViewModel::class.java)
-        vmCart.getCart()
+        vmCart.getCart(userId)
         vmCart.dataCart.observe(viewLifecycleOwner, Observer{
             binding.rvCart.layoutManager = LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL,false)
@@ -47,6 +52,6 @@ class CartFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        getDataCart()
+        getDataCart(idUser)
     }
 }

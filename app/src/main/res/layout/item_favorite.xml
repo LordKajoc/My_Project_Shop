@@ -4,8 +4,8 @@
 
     <data>
         <variable
-            name="products"
-            type="com.lordkajoc.myprojectshop.model.DataProductResponseItem" />
+            name="favorite"
+            type="com.lordkajoc.myprojectshop.model.DataFavProductResponseItem" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -26,14 +26,14 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginRight="10dp"
-                android:src="@{products.productImage}" />
+                android:src="@{favorite.productImage}" />
 
             <TextView
                 android:id="@+id/tvJudulProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/imgProduct"
-                android:text="@{products.name}"
+                android:text="@{favorite.name}"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvJudulProduct"
                 android:layout_toRightOf="@+id/imgProduct"
-                android:text="@{products.createdAt}" />
+                android:text="@{favorite.createdAt}" />
 
             <TextView
                 android:id="@+id/tvHrgProduct"
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvTglProduct"
                 android:layout_toRightOf="@+id/imgProduct"
-                android:text="@{`Rp ` + products.price}"
+                android:text="@{`Rp ` + favorite.price}"
                 android:textColor="@color/teal_700" />
 
         </RelativeLayout>

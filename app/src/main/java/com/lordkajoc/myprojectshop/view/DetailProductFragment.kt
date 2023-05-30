@@ -34,6 +34,8 @@ class DetailProductFragment : Fragment() {
     private lateinit var profileViewModel : ProfileViewModel
     private lateinit var idUser :String
     private lateinit var idProduct :String
+    private lateinit var idFav: String
+
     private lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var selectedCart : DataCartResponseItem
@@ -46,11 +48,13 @@ class DetailProductFragment : Fragment() {
     ): View {
         binding = FragmentDetailProductBinding.inflate(inflater, container, false)
         return binding.root
+
     }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         favViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
@@ -61,7 +65,6 @@ class DetailProductFragment : Fragment() {
         if (idProduct != null) {
             viewModel.getProductById(idProduct)
             observeDetailProduct()
-            checkFavorite(idProduct)
             //test crashlytics
             binding.btnCrashdetail.setOnClickListener {
                 throw RuntimeException("Test Crash") // Force a crash
@@ -97,8 +100,8 @@ class DetailProductFragment : Fragment() {
                         idUser
                     )
                     getPostCart(idUser, it)
-
-                    setFavoriteListener(idProduct, selectedProduct)
+                    checkFavorite(selectedProduct.idFav)
+                    setFavoriteListener(selectedProduct.userId,selectedProduct.idFav, it)
                     selectedCart = DataCartResponseItem(
                         it.createdAt!!,
                         it.description!!,
@@ -117,18 +120,16 @@ class DetailProductFragment : Fragment() {
 //        profileViewModel.getProfileById(idUser)
 //    }
 
-    private fun setFavoriteListener(idProduct:String,fav : DataFavProductResponseItem) {
-        isFavorite = false
-        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+    private fun setFavoriteListener(idUser: String, idProduct:String,fav : DataDetailProductItem) {
         binding.icFav.apply {
             setOnClickListener {
                 isFavorite =
                     if (!isFavorite) {
-                    addToFavorite(sharedPreferences.getString("id", "").toString(), fav)
+                    addToFavorite(idUser, fav)
                     binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
                     true
                 } else {
-                    deleteFromFavorite(sharedPreferences.getString("id", "").toString(),idProduct)
+                    deleteFromFavorite(idProduct)
                     binding.icFav.setImageResource(R.drawable.ic_favorite_outline)
                     false
                 }
@@ -137,7 +138,7 @@ class DetailProductFragment : Fragment() {
     }
 
 //    private lateinit var id : String
-    private fun addToFavorite(userId:String, fav : DataFavProductResponseItem) {
+    private fun addToFavorite(userId:String,fav: DataDetailProductItem) {
         favViewModel.postFav(userId,fav)
         favViewModel.dataPostFav.observe(viewLifecycleOwner) {
             if (it != null) {
@@ -149,8 +150,8 @@ class DetailProductFragment : Fragment() {
         }
     }
 
-    private fun deleteFromFavorite(userId: String, idProduct:String) {
-        favViewModel.deleteFav(userId,idProduct)
+    private fun deleteFromFavorite(favId:String) {
+        favViewModel.deleteFav(favId)
         favViewModel.dataDeleteFav.observe(viewLifecycleOwner) {
             if (it != null) {
                 Toast.makeText(requireContext(), "Sukses menghapus favorit", Toast.LENGTH_SHORT)
@@ -162,9 +163,9 @@ class DetailProductFragment : Fragment() {
         }
     }
 
-    private fun checkFavorite(id: String) {
-        favViewModel.isCheck(id)
-       favViewModel.isFav.observe(viewLifecycleOwner) {
+    private fun checkFavorite(favId: String) {
+        favViewModel.checkFav(favId)
+       favViewModel.dataCheckFav.observe(viewLifecycleOwner) {
             if (it != null) {
                 if (it) {
                     isFavorite = true
