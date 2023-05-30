@@ -55,6 +55,6 @@ interface ApiService {
         @Path("id") id: String,
         @Body request: DataDetailProductItem) : Call <List<DataCartResponseItem>>
 
-    @GET("user/99/cart")
+    @GET("users/99/cart")
     fun getCart(): Call<List<DataCartResponseItem>>
 }

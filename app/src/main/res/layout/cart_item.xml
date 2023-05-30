@@ -3,7 +3,6 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="cart"
             type="com.lordkajoc.myprojectshop.model.DataCartResponseItem" />
@@ -27,14 +26,14 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginRight="10dp"
-                android:src="@{cart.name}" />
+                android:src="@{cart.productImage}" />
 
             <TextView
                 android:id="@+id/tvJudulProductCart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/imgProductCart"
-                android:text="@{cart.description}"
+                android:text="@{cart.name}"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
