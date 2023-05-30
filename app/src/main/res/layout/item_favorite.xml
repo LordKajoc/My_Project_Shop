@@ -4,12 +4,12 @@
 
     <data>
         <variable
-            name="products"
-            type="com.lordkajoc.myprojectshop.model.DataProductResponseItem" />
+            name="favorite"
+            type="com.lordkajoc.myprojectshop.model.DataFavProductResponseItem" />
     </data>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/card_view"
+        android:id="@+id/cvFav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -22,18 +22,18 @@
             android:layout_margin="10dp">
 
             <ImageView
-                android:id="@+id/imgProduct"
+                android:id="@+id/imgFav"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginRight="10dp"
-                android:src="@{products.productImage}" />
+                android:src="@{favorite.productImage}" />
 
             <TextView
-                android:id="@+id/tvJudulProduct"
+                android:id="@+id/tvJudulFav"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/imgProduct"
-                android:text="@{products.name}"
+                android:layout_toRightOf="@id/imgFav"
+                android:text="@{favorite.name}"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -43,17 +43,17 @@
                 style="@style/textbody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvJudulProduct"
-                android:layout_toRightOf="@+id/imgProduct"
-                android:text="@{products.createdAt}" />
+                android:layout_below="@+id/tvJudulFav"
+                android:layout_toRightOf="@+id/imgFav"
+                android:text="@{favorite.createdAt}" />
 
             <TextView
                 android:id="@+id/tvHrgProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvTglProduct"
-                android:layout_toRightOf="@+id/imgProduct"
-                android:text="@{`Rp ` + products.price}"
+                android:layout_toRightOf="@+id/imgFav"
+                android:text="@{`Rp ` + favorite.price}"
                 android:textColor="@color/teal_700" />
 
         </RelativeLayout>

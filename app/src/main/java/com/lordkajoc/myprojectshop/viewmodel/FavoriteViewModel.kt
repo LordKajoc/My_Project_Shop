@@ -45,15 +45,18 @@ class FavoriteViewModel @Inject constructor(private val Client: ApiService) : Vi
     val dataDeleteFav: LiveData<String?> get() = liveDataDeleteFav
     fun deleteFav(userId: String,idProduct:String){
         //memakai callback yang retrofit
-        Client.getDeleteFavorite(userId,idProduct).enqueue(object : Callback<String>{
-            override fun onResponse(call: Call<String>, response: Response<String>) {
+        Client.getDeleteFavorite(userId,idProduct).enqueue(object : Callback<List<DataFavProductResponseItem>>{
+            override fun onResponse(
+                call: Call<List<DataFavProductResponseItem>>,
+                response: Response<List<DataFavProductResponseItem>>
+            ) {
                 if (response.isSuccessful){
-                    liveDataDeleteFav.postValue(response.body())
+                    liveDataDeleteFav.postValue(response.body().toString())
                 }else{
                     liveDataDeleteFav.postValue(null)
-                }
-            }
-            override fun onFailure(call: Call<String>, t: Throwable) {
+                }            }
+
+            override fun onFailure(call: Call<List<DataFavProductResponseItem>>, t: Throwable) {
                 liveDataDeleteFav.postValue(null)
             }
         })
@@ -77,6 +80,26 @@ class FavoriteViewModel @Inject constructor(private val Client: ApiService) : Vi
 
             override fun onFailure(call: Call<Boolean>, t: Throwable) {
                 _IsFav.postValue(false)
+            }
+        })
+    }
+    fun getFav(){
+        //memakai callback yang retrofit
+        Client.getFav().enqueue(object : Callback<List<DataFavProductResponseItem>> {
+            override fun onResponse(
+                call: Call<List<DataFavProductResponseItem>>,
+                response: Response<List<DataFavProductResponseItem>>
+
+            ) {
+                if (response.isSuccessful){
+                    liveDataPostFav.postValue(response.body())
+                }else{
+                    liveDataPostFav.postValue(emptyList())
+                }
+            }
+
+            override fun onFailure(call: Call<List<DataFavProductResponseItem>>, t: Throwable) {
+                liveDataPostFav.postValue(emptyList())
             }
         })
     }

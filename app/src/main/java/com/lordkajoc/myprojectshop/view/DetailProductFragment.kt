@@ -78,9 +78,7 @@ class DetailProductFragment : Fragment() {
                     Glide.with(requireContext())
                         .load("${it.productImage}")
                         .into(binding.ivProductimagedetail)
-                    //        binding.tvSinopsisfilmdetail.text = """Overview:
-//            ${getfilm.overview}
-//        """.trimIndent()
+
                     binding.tvDescriptionproductdetail.text = """Description:
                         |
                     """.trimMargin() + it.description.toString()
