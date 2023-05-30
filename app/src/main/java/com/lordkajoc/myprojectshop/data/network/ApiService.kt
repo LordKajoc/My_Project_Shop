@@ -50,9 +50,10 @@ interface ApiService {
     @GET("users/99/favourite/{id}")
     fun check(@Path("id") id: String): Call<Boolean>
 
-    @POST("users/99/cart")
-    fun postCart(@Body request: DataCart) : Call <List<DataCart>>
+    @POST("users/{id}/cart")
+    fun postCart(@Path("id") id:String,
+                 @Body request: DataDetailProductItem) : Call <List<DataCart>>
 
-    @GET("user/99/cart")
-    fun getCart(): Call<List<DataCart>>
+    @GET("users/{id}/cart")
+    fun getCart(@Path("id")id:String): Call<List<DataCart>>
 }

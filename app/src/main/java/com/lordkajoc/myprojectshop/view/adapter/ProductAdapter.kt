@@ -12,7 +12,7 @@ import com.lordkajoc.myprojectshop.databinding.ItemProductBinding
 import com.lordkajoc.myprojectshop.model.DataCart
 import com.lordkajoc.myprojectshop.model.DataProductResponseItem
 
-class ProductAdapter(private var listProduct: List<DataProductResponseItem>) :
+class   ProductAdapter(private var listProduct: List<DataProductResponseItem>) :
     RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
 
     class ViewHolder(var binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root) {

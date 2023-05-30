@@ -40,7 +40,6 @@ class DetailProductFragment : Fragment() {
 
     private lateinit var selectedCart : DataCart
     private lateinit var selectedProduct: DataFavProductResponseItem
-    private lateinit var dataFav :DataFavProductResponseItem
     private var isFavorite by Delegates.notNull<Boolean>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,7 +63,6 @@ class DetailProductFragment : Fragment() {
             viewModel.getProductById(idProduct)
             observeDetailProduct()
             checkFavorite(idProduct)
-            getPostCart()
             //test crashlytics
             binding.btnCrashdetail.setOnClickListener {
                 throw RuntimeException("Test Crash") // Force a crash
@@ -99,6 +97,7 @@ class DetailProductFragment : Fragment() {
                         it.productImage!!,
                         idUser
                     )
+                    getPostCart(idUser, it)
                     setFavoriteListener(idProduct, selectedProduct)
                     selectedCart = DataCart(
                         it.idProduct!!,
@@ -176,9 +175,10 @@ class DetailProductFragment : Fragment() {
             }
         }
     }
-    private fun addToCart(cart: DataCart){
+    private fun addToCart(id:String, cart: DataDetailProductItem){
         cartViewModel = ViewModelProvider(this).get(CartViewModel::class.java)
-        cartViewModel.postCart(cart)
+        cartViewModel = ViewModelProvider(this).get(CartViewModel::class.java)
+        cartViewModel.postCart(id, cart)
         cartViewModel.dataCart.observe(viewLifecycleOwner) {
             if (it != null) {
                 Toast.makeText(requireContext(), "Sukses tambah favorit", Toast.LENGTH_SHORT).show()
@@ -188,10 +188,10 @@ class DetailProductFragment : Fragment() {
             }
         }
     }
-    private fun getPostCart(){
+    private fun getPostCart(id:String, cart:DataDetailProductItem){
         binding.icCart.apply {
             setOnClickListener {
-                addToCart(selectedCart)
+                addToCart(id, cart)
 //                findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment)
             }
         }

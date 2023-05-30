@@ -14,17 +14,11 @@ import com.lordkajoc.myprojectshop.databinding.ItemProductBinding
 import com.lordkajoc.myprojectshop.model.DataCart
 import com.lordkajoc.myprojectshop.model.DataNewsResponseItem
 
-class CartAdapter(private var listCart: List<DataCart>) :
+class   CartAdapter(private var listCart: List<DataCart>) :
     RecyclerView.Adapter<CartAdapter.ViewHolder>() {
     class ViewHolder(var binding: CartItemBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindCart(itemCart: DataCart) {
             binding.cart= itemCart
-            binding.cvCart.setOnClickListener {
-                val bundle = Bundle().apply {
-                    putInt("ID", itemCart.idCart.toString().toInt())
-                }
-                it.findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment, bundle)
-            }
         }
     }
 
