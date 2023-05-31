@@ -47,17 +47,11 @@ class ProfileFragment : Fragment() {
         id = sharedPreferences.getString("id", "").toString()
 
         getDataProfile()
-//        binding.btnLogout.setOnClickListener {
-//            firebaseAuth = FirebaseAuth.getInstance()
-//            firebaseAuth.signOut()
-//            val addUser = sharedPreferences.edit()
-//            addUser.remove("nama")
-//            addUser.remove("tgl")
-//            addUser.remove("alamat")
-//            addUser.apply()
-//            Toast.makeText(context, "Keluar Berhasil", Toast.LENGTH_SHORT).show()
-//            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
-//        }
+
+        binding.btnLogout.setOnClickListener {
+            logout()
+        }
+
     }
 
     fun getDataProfile() {
@@ -71,13 +65,16 @@ class ProfileFragment : Fragment() {
             }
         }
     }
-}
 
-//    fun initData(userdatalist : List<DataUsersResponseItem>){
-//
-//        for (i in userdatalist.indices){
-//            binding.etUsernameprofile.setText(userdatalist[i].name)
-////            cnameProfile.setText(userdatalist[i].completeName)
-////            addressProfile.setText(userdatalist[i].address)
-////            birthdateProfile.setText(userdatalist[i].dateofbirth)
-//        }
+    private fun logout() {
+        FirebaseAuth.getInstance().signOut()
+
+        val editor = sharedPreferences.edit()
+        editor.remove("username")
+        editor.remove("id")
+        editor.apply()
+
+        Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
+        findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+    }
+}
