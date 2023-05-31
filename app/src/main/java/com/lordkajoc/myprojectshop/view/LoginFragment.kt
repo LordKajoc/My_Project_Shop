@@ -33,7 +33,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
     private lateinit var userVM: UserViewModel
-    lateinit var sharepref: SharedPreferences
+    lateinit var sharepref : SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +48,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         userVM = ViewModelProvider(this).get(UserViewModel::class.java)
 
-        sharepref = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        sharepref = requireContext().getSharedPreferences("LOGGED_IN" , Context.MODE_PRIVATE)
 
         binding.btnLogin.setOnClickListener {
 //            val email = binding.etEmaillogin.text.toString()

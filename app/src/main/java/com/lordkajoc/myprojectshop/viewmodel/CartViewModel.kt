@@ -3,6 +3,7 @@ package com.lordkajoc.myprojectshop.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.play.integrity.internal.t
 import com.lordkajoc.myprojectshop.data.network.ApiService
 import com.lordkajoc.myprojectshop.model.DataCart
 import com.lordkajoc.myprojectshop.model.DataCartResponseItem
@@ -39,7 +40,7 @@ class CartViewModel@Inject constructor(private val Client: ApiService) : ViewMod
         })
     }
 
-    fun getCart(userId:String){
+    fun getCart(userId: String){
         Client.getCart(userId).enqueue(object : Callback<List<DataCartResponseItem>> {
             override fun onResponse(
                 call: Call<List<DataCartResponseItem>>,

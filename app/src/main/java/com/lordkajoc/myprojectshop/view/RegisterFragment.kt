@@ -51,13 +51,13 @@ class RegisterFragment : Fragment() {
         val email = binding.etEmailregister.text.toString()
         val password = binding.etPasswordregister.text.toString()
         val passwordConfirm = binding.etRepasswordregister.text.toString()
-        val currentDateTime: LocalDateTime = LocalDateTime.now()
+        //val currentDateTime: LocalDateTime = LocalDateTime.now()
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
             Toast.makeText(requireContext(), "Please fill all the field", Toast.LENGTH_SHORT).show()
         } else {
             if (password == passwordConfirm) {
-                userVM.postUserRegister(dataUsers = DataUsersResponseItem("$currentDateTime",email,"","",username,password))
+                userVM.postUserRegister(dataUsers = DataUsersResponseItem("",email,"","",username,password))
                 Toast.makeText(requireContext(), "Registration Success", Toast.LENGTH_SHORT)
                     .show()
                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)

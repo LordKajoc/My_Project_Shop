@@ -84,7 +84,7 @@ class FavoriteViewModel @Inject constructor(private val Client: ApiService) : Vi
 
     private val liveDataCheckFav: MutableLiveData<Boolean> = MutableLiveData()
     val dataCheckFav: LiveData<Boolean> get() = liveDataCheckFav
-    fun checkFav(userId: String,) {
+    fun checkFav(userId: String) {
         //memakai callback yang retrofit
         Client.checkFav(userId).enqueue(object : Callback<Boolean> {
             override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
@@ -100,6 +100,9 @@ class FavoriteViewModel @Inject constructor(private val Client: ApiService) : Vi
             }
         })
     }
-
-
 }
+
+
+
+
+

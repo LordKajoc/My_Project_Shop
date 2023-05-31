@@ -12,14 +12,18 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentDetailProductBinding
-import com.lordkajoc.myprojectshop.model.*
-import com.lordkajoc.myprojectshop.viewmodel.*
+import com.lordkajoc.myprojectshop.model.DataCart
+import com.lordkajoc.myprojectshop.model.DataDetailProductItem
+import com.lordkajoc.myprojectshop.model.DataFavProductResponseItem
+import com.lordkajoc.myprojectshop.model.DataProductResponseItem
+import com.lordkajoc.myprojectshop.viewmodel.CartViewModel
+import com.lordkajoc.myprojectshop.viewmodel.FavoriteViewModel
+import com.lordkajoc.myprojectshop.viewmodel.HomeViewModel
+import com.lordkajoc.myprojectshop.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.Serializable
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -32,13 +36,10 @@ class DetailProductFragment : Fragment() {
     private lateinit var profileViewModel : ProfileViewModel
     private lateinit var idUser :String
     private lateinit var idProduct :String
-    private lateinit var idFav: String
-
     private lateinit var sharedPreferences: SharedPreferences
 
-    private lateinit var selectedCart : DataCartResponseItem
+    private lateinit var selectedCart : DataCart
     private lateinit var selectedProduct: DataFavProductResponseItem
-    private lateinit var dataFav :DataFavProductResponseItem
     private var isFavorite by Delegates.notNull<Boolean>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,13 +47,11 @@ class DetailProductFragment : Fragment() {
     ): View {
         binding = FragmentDetailProductBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         favViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
@@ -63,6 +62,7 @@ class DetailProductFragment : Fragment() {
         if (idProduct != null) {
             viewModel.getProductById(idProduct)
             observeDetailProduct()
+            checkFavorite(idProduct)
             //test crashlytics
             binding.btnCrashdetail.setOnClickListener {
                 throw RuntimeException("Test Crash") // Force a crash
@@ -79,86 +79,70 @@ class DetailProductFragment : Fragment() {
                     Glide.with(requireContext())
                         .load("${it.productImage}")
                         .into(binding.ivProductimagedetail)
-
+                    //        binding.tvSinopsisfilmdetail.text = """Overview:
+//            ${getfilm.overview}
+//        """.trimIndent()
                     binding.tvDescriptionproductdetail.text = """Description:
                         |
                     """.trimMargin() + it.description.toString()
 
                     sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
                     idUser = sharedPreferences.getString("id","").toString()
-
-                    //if (idUser.isNotEmpty()) { // Cek apakah pengguna sudah login
-                        selectedProduct = DataFavProductResponseItem(
-                            it.createdAt!!,
-                            it.description!!,
-                            it.idProduct!!,
-                            it.name!!,
-                            it.price!!,
-                            it.productImage!!,
-                            idUser
-                        )
-                        getPostCart(idUser, it)
-                        checkFavorite(selectedProduct.idFav)
-                        setFavoriteListener(selectedProduct.userId, selectedProduct.idFav, it)
-                        selectedCart = DataCartResponseItem(
-                            it.createdAt!!,
-                            it.description!!,
-                            it.idProduct!!,
-                            it.name!!,
-                            it.price!!,
-                            it.productImage!!,
-                            idUser
-                        )
-                    //} else {
-                        // Tambahkan kode untuk menampilkan pesan bahwa pengguna harus login atau memiliki ID pengguna untuk menambahkan ke keranjang
-//                        Toast.makeText(requireContext(), "Anda harus login atau memiliki ID pengguna untuk menambahkan ke keranjang", Toast.LENGTH_SHORT)
-//                            .show()
-                   // }
+                    selectedProduct = DataFavProductResponseItem(
+                        it.createdAt!!,
+                        it.description!!,
+                        it.idProduct!!,
+                        it.name!!,
+                        it.price!!,
+                        it.productImage!!,
+                        idUser
+                    )
+                    getPostCart(idUser, it)
+                    setFavoriteListener(selectedProduct.userId, selectedProduct.idFav, it)
+                    selectedCart = DataCart(
+                        it.idProduct!!,
+                        it.name!!,
+                        it.price!!,
+                        it.productImage!!
+                    )
                 }
             }
         }
     }
 
+//    fun getDataProfile() {
+//        profileViewModel.getProfileById(idUser)
+//    }
 
     private fun setFavoriteListener(idUser: String, idProduct:String,fav : DataDetailProductItem) {
+        isFavorite = false
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
         binding.icFav.apply {
-//            if (idUser.isNotEmpty()) { // Cek apakah pengguna sudah login
             setOnClickListener {
                 isFavorite =
                     if (!isFavorite) {
-                        addToFavorite(idUser, fav)
-                        binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
-                        true
-                    } else {
-                        deleteFromFavorite(idProduct)
-                        binding.icFav.setImageResource(R.drawable.ic_favorite_outline)
-                        false
-                    }
+                    addToFavorite(idUser, fav)
+                    binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
+                    true
+                } else {
+                    deleteFromFavorite(idUser)
+                    binding.icFav.setImageResource(R.drawable.ic_favorite_outline)
+                    false
+                }
             }
-//            }else{
-                // Tambahkan kode untuk menampilkan pesan bahwa pengguna harus login atau memiliki ID pengguna untuk menambahkan ke keranjang
-                        //Toast.makeText(requireContext(), "Anda harus login untuk menambahkan ke favorite", Toast.LENGTH_SHORT).show()
-//            }
         }
     }
 
-    //    private lateinit var id : String
-    private fun addToFavorite(userId:String,fav: DataDetailProductItem) {
-        if (idUser.isNotEmpty()) { // Cek apakah pengguna sudah login
-            favViewModel.postFav(userId, fav)
-            favViewModel.dataPostFav.observe(viewLifecycleOwner) {
-                if (it != null) {
-                    Toast.makeText(requireContext(), "Sukses tambah favorit", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    Toast.makeText(requireContext(), "Failed menambah favorit", Toast.LENGTH_SHORT)
-                        .show()
-                }
+//    private lateinit var id : String
+    private fun addToFavorite(userId:String, fav : DataDetailProductItem) {
+        favViewModel.postFav(userId,fav)
+        favViewModel.dataPostFav.observe(viewLifecycleOwner) {
+            if (it != null) {
+                Toast.makeText(requireContext(), "Sukses tambah favorit", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Failed menambah favorit", Toast.LENGTH_SHORT)
+                    .show()
             }
-        }else{
-        // Tambahkan kode untuk menampilkan pesan bahwa pengguna harus login atau memiliki ID pengguna untuk menambahkan ke keranjang
-        Toast.makeText(requireContext(), "Anda harus login untuk menambahkan ke Favorite", Toast.LENGTH_SHORT).show()
-        findNavController().navigate(R.id.action_detailProductFragment_to_loginFragment)
         }
     }
 
@@ -175,9 +159,9 @@ class DetailProductFragment : Fragment() {
         }
     }
 
-    private fun checkFavorite(favId: String) {
-        favViewModel.checkFav(favId)
-        favViewModel.dataCheckFav.observe(viewLifecycleOwner) {
+    private fun checkFavorite(id: String) {
+        favViewModel.checkFav(id)
+       favViewModel.dataCheckFav.observe(viewLifecycleOwner) {
             if (it != null) {
                 if (it) {
                     isFavorite = true
@@ -191,29 +175,23 @@ class DetailProductFragment : Fragment() {
             }
         }
     }
-    private fun addToCart(id: String,cart: DataDetailProductItem){
-        if (idUser.isNotEmpty()) { // Cek apakah pengguna sudah login
-            cartViewModel = ViewModelProvider(this).get(CartViewModel::class.java)
+    private fun addToCart(id:String, cart: DataDetailProductItem){
+        cartViewModel = ViewModelProvider(this).get(CartViewModel::class.java)
+
         cartViewModel.postCart(id, cart)
-//        cartViewModel.postCart(cart = DataDetailProductItem("","","","","","",""))
         cartViewModel.dataCart.observe(viewLifecycleOwner) {
             if (it != null) {
-                Toast.makeText(requireContext(), "Sukses tambah Cart", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Sukses tambah favorit", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(requireContext(), "Failed menambah Cart", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Failed menambah favorit", Toast.LENGTH_SHORT)
                     .show()
             }
-        }
-        }else{
-            // Tambahkan kode untuk menampilkan pesan bahwa pengguna harus login atau memiliki ID pengguna untuk menambahkan ke keranjang
-            Toast.makeText(requireContext(), "Anda harus login untuk menambahkan ke keranjang", Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_detailProductFragment_to_loginFragment)
         }
     }
     private fun getPostCart(id:String, cart:DataDetailProductItem){
         binding.icCart.apply {
             setOnClickListener {
-                addToCart(id,cart)
+                addToCart(id, cart)
 //                findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment)
             }
         }
