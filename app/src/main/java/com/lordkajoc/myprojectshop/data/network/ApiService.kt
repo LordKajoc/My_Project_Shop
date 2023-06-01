@@ -81,4 +81,17 @@ interface ApiService {
     fun getCart(
         @Path("id") id: String
     ): Call<List<DataCartResponseItem>>
+    @FormUrlEncoded
+    @POST("users/{id}/transhistory")
+    fun postHistory(
+        @Path("id") id:String,
+        @Field("name") name:String,
+        @Field("product_image") productImage:String,
+        @Field("price") price:Int,
+        @Field("description") description:String
+    ): Call <List<DataTransHistory>>
+    @GET("users/{id}/transhistory")
+    fun getTransHistory(
+        @Path("id") id: String
+    ): Call<List<DataTransHistory>>
 }

@@ -16,10 +16,7 @@ import com.bumptech.glide.Glide
 import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentDetailProductBinding
 import com.lordkajoc.myprojectshop.model.*
-import com.lordkajoc.myprojectshop.viewmodel.CartViewModel
-import com.lordkajoc.myprojectshop.viewmodel.FavoriteViewModel
-import com.lordkajoc.myprojectshop.viewmodel.HomeViewModel
-import com.lordkajoc.myprojectshop.viewmodel.ProfileViewModel
+import com.lordkajoc.myprojectshop.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import kotlin.properties.Delegates
@@ -31,6 +28,7 @@ class DetailProductFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var favViewModel: FavoriteViewModel
     private lateinit var cartViewModel: CartViewModel
+    private lateinit var tranHistoryViewModel: HistoryViewModel
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var idUser: String
     private lateinit var idProduct: String
@@ -111,6 +109,7 @@ class DetailProductFragment : Fragment() {
                 }
                 setFavoriteListener()
                 getPostCart()
+                getTransHis()
             }
         }
     }
@@ -220,6 +219,40 @@ class DetailProductFragment : Fragment() {
                 addItemCart()
 //                findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment)
             }
+        }
+    }
+    private fun addToTransHistory(
+        id: String,
+        name: String,
+        productImage: String,
+        price: Int,
+        desc: String
+    ) {
+        tranHistoryViewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
+        tranHistoryViewModel.postTrans(id, name, productImage, price, desc)
+    }
+    private fun addItemToTransHistory(){
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val idUser = sharedPreferences.getString("id", "").toString()
+        viewModel.detailProduct.observe(viewLifecycleOwner) {
+            val name = it.name
+            val productImage = it.productImage
+            val price = it.price.toInt()
+            val desc = it.description
+            val id = idUser
+            addToTransHistory(id, name, productImage, price, desc)
+            if (it != null) {
+                Toast.makeText(requireContext(), "Berhasil Melakukan Transaksi", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(requireContext(), "Gagal Melakukan Transaksi", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+    private fun getTransHis(){
+        binding.buyNow.setOnClickListener {
+            addItemToTransHistory()
         }
     }
 }

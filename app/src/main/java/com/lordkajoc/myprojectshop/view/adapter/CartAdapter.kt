@@ -1,17 +1,10 @@
 package com.lordkajoc.myprojectshop.view.adapter
 
-import android.os.Bundle
-import android.provider.ContactsContract.Data
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.CartItemBinding
-import com.lordkajoc.myprojectshop.databinding.ItemNewsBinding
-import com.lordkajoc.myprojectshop.databinding.ItemProductBinding
-import com.lordkajoc.myprojectshop.model.DataCart
 import com.lordkajoc.myprojectshop.model.DataCartResponseItem
 import com.lordkajoc.myprojectshop.model.DataNewsResponseItem
 
@@ -20,12 +13,6 @@ class CartAdapter(private var listCart: List<DataCartResponseItem>) :
     class ViewHolder(var binding: CartItemBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindCart(itemCart: DataCartResponseItem) {
             binding.cart= itemCart
-//            binding.cvCart.setOnClickListener {
-//                val bundle = Bundle().apply {
-//                    putInt("ID", itemCart.idCart.toInt())
-//                }
-//                it.findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment, bundle)
-//            }
         }
     }
 
