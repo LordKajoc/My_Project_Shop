@@ -20,12 +20,12 @@ class CartAdapter(private var listCart: List<DataCartResponseItem>) :
     class ViewHolder(var binding: CartItemBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindCart(itemCart: DataCartResponseItem) {
             binding.cart= itemCart
-            binding.cvCart.setOnClickListener {
-                val bundle = Bundle().apply {
-                    putInt("ID", itemCart.idCart.toInt())
-                }
-                it.findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment, bundle)
-            }
+//            binding.cvCart.setOnClickListener {
+//                val bundle = Bundle().apply {
+//                    putInt("ID", itemCart.idCart.toInt())
+//                }
+//                it.findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment, bundle)
+//            }
         }
     }
 

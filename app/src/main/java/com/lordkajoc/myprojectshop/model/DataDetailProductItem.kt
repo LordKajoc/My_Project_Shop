@@ -5,17 +5,17 @@ import java.io.Serializable
 
 data class DataDetailProductItem(
     @SerializedName("category_productId")
-    val categoryProductId: String? = null,
+    val categoryProductId: String,
     @SerializedName("createdAt")
-    val createdAt: String? = null,
+    val createdAt: String,
     @SerializedName("description")
-    val description: String? = null,
+    val description: String,
     @SerializedName("id_product")
-    val idProduct: String? = null,
+    val idProduct: String,
     @SerializedName("name")
-    val name: String? = null,
+    val name: String,
     @SerializedName("price")
-    val price: String? = null,
+    val price: String,
     @SerializedName("product_image")
-    val productImage: String? = null
+    val productImage: String
 ) : Serializable

@@ -113,8 +113,8 @@ class HomeViewModel @Inject constructor(private val Client:ApiService): ViewMode
         })
     }
 
-    private val liveDetailProduct: MutableLiveData<DataDetailProductItem?> = MutableLiveData()
-    val detailProduct: LiveData<DataDetailProductItem?> get() = liveDetailProduct
+    private val liveDetailProduct: MutableLiveData<DataDetailProductItem> = MutableLiveData()
+    val detailProduct: LiveData<DataDetailProductItem> get() = liveDetailProduct
 
     fun getProductById(id: String) {
         Client.getDetailProduct(id).enqueue(object : Callback<DataDetailProductItem> {
@@ -123,10 +123,8 @@ class HomeViewModel @Inject constructor(private val Client:ApiService): ViewMode
                 response: Response<DataDetailProductItem>
             ) {
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        liveDetailProduct.postValue(responseBody)
-                    }
+                    liveDetailProduct.postValue(response.body())
+                } else{
                 }
             }
             override fun onFailure(call: Call<DataDetailProductItem>, t: Throwable) {

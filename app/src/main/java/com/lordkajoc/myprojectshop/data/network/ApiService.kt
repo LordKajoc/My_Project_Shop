@@ -35,32 +35,50 @@ interface ApiService {
 //    @PUT("users/{id}")
 //    fun updateUser(@Path("id") id : Int, @Body request: DataProfile): Call<PostUserResponse>
 
-    @POST("users/{id}?/favourite")
+    @POST("users/{id}/favourite")
     fun getPostFavorite(
         @Path("id") userId: String,
         @Body request : DataDetailProductItem
     ) : Call<List<DataFavProductResponseItem>>
 
-    @DELETE("users/99/favourite/{idFav}")
-    fun getDeleteFavorite(
-//        @Path("id") userId : String,
-        @Path("idFav") idFav : String
-    ) : Call<Unit>
+    @FormUrlEncoded
+    @POST("users/{id}/favourite")
+    fun postFavouriteProduct(
+        @Path("id") id:String,
+        @Field("name") name:String,
+        @Field("product_image") productImage:String,
+        @Field("price") price:Int,
+        @Field("description") description:String,
+    ):Call<DataFavProductResponseItem>
+
+    @DELETE("users/{userId}/favourite/{id}")
+    fun deleteFavouriteProduct(
+        @Path("userId") userId:String,
+        @Path("id") id:String
+    ):Call<DataFavProductResponseItem>
 
     @GET("users/{id}/favourite")
     fun getFavorite(@Path("id") userId: String,
     ) : Call<List<DataFavProductResponseItem>>
-    @GET("users/99/favourite/{idFav}")
 
+    @GET("users/{id}/favourite/{idFav}")
     fun checkFav(
-//        @Path("id") userId : String,
-        @Path("idFav") idFav : String
-    ) : Call<Boolean>
+        @Path("id") userId:String,
+        @Path("idFav") id:String
+    ) : Call<DataFavProductResponseItem>
 
+    @FormUrlEncoded
     @POST("users/{id}/cart")
-    fun postCart(@Path("id") id:String,
-                 @Body request: DataDetailProductItem) : Call <List<DataCartResponseItem>>
+    fun postCart(
+        @Path("id") id:String,
+        @Field("name") name:String,
+        @Field("product_image") productImage:String,
+        @Field("price") price:Int,
+        @Field("description") description:String)
+    : Call <List<DataCartResponseItem>>
 
     @GET("users/{id}/cart")
-    fun getCart(@Path("id")id:String): Call<List<DataCartResponseItem>>
+    fun getCart(
+        @Path("id") id: String
+    ): Call<List<DataCartResponseItem>>
 }
