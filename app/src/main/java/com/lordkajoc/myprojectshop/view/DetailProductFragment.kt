@@ -68,7 +68,6 @@ class DetailProductFragment : Fragment() {
         if (idProduct != null) {
             viewModel.getProductById(idProduct)
             observeDetailProduct()
-//            checkFavorite()
             //test crashlytics
             binding.btnCrashdetail.setOnClickListener {
                 throw RuntimeException("Test Crash") // Force a crash
@@ -111,7 +110,7 @@ class DetailProductFragment : Fragment() {
                     }
                 }
                 setFavoriteListener()
-
+                getPostCart()
             }
         }
     }
@@ -183,27 +182,6 @@ class DetailProductFragment : Fragment() {
         }
     }
 
-    private fun checkFavorite() {
-        sharedPreferences =
-            requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
-        val idUser = sharedPreferences.getString("id", "").toString()
-        favViewModel.checkFav(idUser, idFav!!)
-        favViewModel.loadData.observe(viewLifecycleOwner) {
-            if (it) {
-                isFavorite = !isFavorite
-                if (isFavorite) {
-                    addItemfavorite()
-                    binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
-                } else {
-                    deleteFromFavorite()
-                    binding.icFav.setImageResource(R.drawable.ic_favorite_outline)
-                }
-            } else {
-                Log.d("CHECK_FAV", "checkFavoriteMovie: $it")
-            }
-        }
-    }
-
     private fun addToCart(
         id: String,
         name: String,
@@ -232,6 +210,15 @@ class DetailProductFragment : Fragment() {
             } else {
                 Toast.makeText(requireContext(), "Gagal menambahkan ke cart", Toast.LENGTH_SHORT)
                     .show()
+            }
+        }
+    }
+
+    private fun getPostCart(){
+        binding.icCart.apply {
+            setOnClickListener {
+                addItemCart()
+//                findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment)
             }
         }
     }
