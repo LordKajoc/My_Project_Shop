@@ -1,8 +1,9 @@
 package com.lordkajoc.myprojectshop
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI.setupWithNavController
@@ -38,5 +39,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         setupWithNavController(bottomNavView, navController)
+    }
+
+    fun clearBackStackInclusive(tag: String?) {
+        supportFragmentManager.popBackStack(tag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 }

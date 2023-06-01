@@ -58,10 +58,31 @@ class ProfileViewModel @Inject constructor(private val Client: ApiService) : Vie
                     }
                 }
             }
+
             override fun onFailure(call: Call<DataUsersResponseItem>, t: Throwable) {
 
             }
-
         })
+    }
+
+    private var liveDataUpdateUser: MutableLiveData<DataUsersResponseItem> = MutableLiveData()
+    val dataUpdateUser: LiveData<DataUsersResponseItem> get() = liveDataUpdateUser
+
+    fun updateUser(iduser:String, updateUser:DataUsersResponseItem) {
+
+        Client.putUpdateUser(iduser, updateUser)
+            .enqueue(object : Callback<DataUsersResponseItem> {
+                override fun onResponse(
+                    call: Call<DataUsersResponseItem>,
+                    response: Response<DataUsersResponseItem>
+                ) {
+                    if (response.isSuccessful) {
+                        liveDataUpdateUser.postValue(response.body())
+                    }
+                }
+
+                override fun onFailure(call: Call<DataUsersResponseItem>, t: Throwable) {
+                }
+            })
     }
 }

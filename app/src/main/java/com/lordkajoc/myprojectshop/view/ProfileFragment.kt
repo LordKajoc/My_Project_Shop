@@ -1,6 +1,8 @@
 package com.lordkajoc.myprojectshop.view
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,12 +10,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentProfileBinding
+import com.lordkajoc.myprojectshop.model.DataUserPostItem
 import com.lordkajoc.myprojectshop.model.DataUsersResponseItem
 import com.lordkajoc.myprojectshop.viewmodel.ProfileViewModel
 import com.lordkajoc.myprojectshop.viewmodel.UserViewModel
@@ -21,14 +27,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
-
     private lateinit var binding: FragmentProfileBinding
-    lateinit var listuser: List<DataUsersResponseItem>
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var model : ProfileViewModel
-    private lateinit var oldPassword : String
-    private lateinit var id : String
-    //lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var model: ProfileViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,43 +43,100 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model = ViewModelProvider(this).get(ProfileViewModel::class.java)
-        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
-        val name = sharedPreferences.getString("username","username")
-//        editor = share.edit()
-        id = sharedPreferences.getString("id", "").toString()
 
         getDataProfile()
-//        binding.btnLogout.setOnClickListener {
-//            firebaseAuth = FirebaseAuth.getInstance()
-//            firebaseAuth.signOut()
-//            val addUser = sharedPreferences.edit()
-//            addUser.remove("nama")
-//            addUser.remove("tgl")
-//            addUser.remove("alamat")
-//            addUser.apply()
-//            Toast.makeText(context, "Keluar Berhasil", Toast.LENGTH_SHORT).show()
-//            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
-//        }
+        binding.btnupdateprofile.setOnClickListener {
+            updateUserProfile()
+            activity?.onBackPressed()
+//            findNavController().navigate(R.id.action_profileFragment_to_homeFragment)
+        }
+
+        binding.btnLogout.setOnClickListener {
+            logout()
+            activity?.onBackPressed()
+        }
     }
 
     fun getDataProfile() {
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val id = sharedPreferences.getString("id", "").toString()
         model.getProfileById(id)
-        model.dataUserProfile.observe(viewLifecycleOwner){
-            if (it != null){
+        val imageUserProfile = binding.imageProfile
+        model.dataUserProfile.observe(viewLifecycleOwner) {
+            if (it != null) {
                 binding.etUsernameprofile.setText(it.name)
-                binding.etAddressprofile.setText(it.email)
-                binding.etTgllahirprofile.setText(it.password)
-                oldPassword = it.password
+                binding.etImagesource.setText(it.image)
+                context?.let { it1 ->
+                    Glide.with(it1)
+                        .load(it.image)
+                        .into(imageUserProfile)
+                }
+
+
             }
         }
     }
-}
 
-//    fun initData(userdatalist : List<DataUsersResponseItem>){
-//
-//        for (i in userdatalist.indices){
-//            binding.etUsernameprofile.setText(userdatalist[i].name)
-////            cnameProfile.setText(userdatalist[i].completeName)
-////            addressProfile.setText(userdatalist[i].address)
-////            birthdateProfile.setText(userdatalist[i].dateofbirth)
-//        }
+    fun updateUserProfile() {
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val createat = sharedPreferences.getString("createat", "").toString()
+        val id = sharedPreferences.getString("id", "").toString()
+        val email = sharedPreferences.getString("email", "").toString()
+        val pass = sharedPreferences.getString("password", "").toString()
+        val nameUser = binding.etUsernameprofile.text.toString()
+        val imageUser = binding.etImagesource.text.toString()
+        val dataUser = DataUsersResponseItem(
+            createat,
+            email,
+            id,
+            imageUser,
+            nameUser,
+            pass
+        )
+        model.updateUser(id, dataUser)
+        navigationBundlingSf(dataUser)
+        model.dataUpdateUser.observe(viewLifecycleOwner) {
+            if (it != null) {
+                Toast.makeText(context, "Update Berhasil", Toast.LENGTH_SHORT)
+            }
+        }
+
+
+    }
+
+    private fun navigationBundlingSf(currentUser: DataUsersResponseItem) {
+        sharedPreferences =
+            requireActivity().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        //shared pref to save log in history
+        val sharedPref = sharedPreferences.edit()
+        sharedPref.putString("createat", currentUser.createdAt)
+        sharedPref.putString("email", currentUser.email)
+        sharedPref.putString("password", currentUser.password)
+        sharedPref.putString("username", currentUser.name)
+        sharedPref.putString("image", currentUser.image)
+        sharedPref.putString("id", currentUser.idUsers)
+        sharedPref.apply()
+    }
+
+
+    private fun logout() {
+        sharedPreferences =
+            requireActivity().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        //shared pref to save log in history
+        val sharedPref = sharedPreferences.edit()
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Logout")
+            .setMessage("Anda Yakin?")
+            .setCancelable(false)
+            .setNegativeButton("Cancel") { dialog, which ->
+                // Respond to negative button press
+                dialog.cancel()
+            }
+            .setPositiveButton("Logout") { dialog, which ->
+                // Respond to positive button press
+                sharedPref.clear()
+                sharedPref.apply()
+            }
+            .show()
+    }
+}

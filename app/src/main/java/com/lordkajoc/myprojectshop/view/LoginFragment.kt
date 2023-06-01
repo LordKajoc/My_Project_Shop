@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -161,6 +162,7 @@ class LoginFragment : Fragment() {
         sharepref = requireActivity().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
         //shared pref to save log in history
         val sharedPref = sharepref.edit()
+        sharedPref.putString("createat", currentUser.createdAt)
         sharedPref.putString("email", currentUser.email)
         sharedPref.putString("password", currentUser.password)
         sharedPref.putString("username", currentUser.name)

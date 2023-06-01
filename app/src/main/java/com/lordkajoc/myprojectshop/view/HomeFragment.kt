@@ -1,5 +1,7 @@
 package com.lordkajoc.myprojectshop.view
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeFragment : Fragment() {
     lateinit var binding: FragmentHomeBinding
     lateinit var viewModelHomeVm: HomeViewModel
+    lateinit var sharedPreferences:SharedPreferences
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,7 +39,8 @@ class HomeFragment : Fragment() {
         getSlider()
         getNews()
         getProduct()
-        binding.tocart.setOnClickListener {
+
+        binding.ivIcCart.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_cartFragment)
         }
     }
@@ -81,4 +85,14 @@ class HomeFragment : Fragment() {
 //        })
 //    }
 
+    override fun onStart() {
+        super.onStart()
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val getUser = sharedPreferences.getString("username", "")
+        if (getUser != null){
+            binding.textViewwc.text = "Welcome, $getUser"
+        }else{
+            binding.textViewwc.text = "Welcome"
+        }
+    }
 }

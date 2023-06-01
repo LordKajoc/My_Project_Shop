@@ -4,11 +4,11 @@ import com.google.gson.annotations.SerializedName
 
 data class DataUserPostItem(
     @SerializedName("email")
-    val email: String? = null,
+    val email: String,
     @SerializedName("image")
-    val image: String? = null,
+    val image: String,
     @SerializedName("name")
-    val name: String? = null,
+    val name: String,
     @SerializedName("password")
-    val password: String? = null
+    val password: String
 )
