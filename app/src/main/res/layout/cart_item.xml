@@ -48,6 +48,14 @@
                 android:text="@{`Rp ` + cart.price}"
                 android:textColor="@color/teal_700" />
 
+            <ImageView
+                android:id="@+id/img_deletecart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                card_view:srcCompat="@drawable/baseline_delete_24"
+                android:layout_below="@id/tvHrgProductCart"
+                android:layout_alignParentEnd="true"/>
+
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
