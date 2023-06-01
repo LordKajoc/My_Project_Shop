@@ -52,9 +52,6 @@ class LoginFragment : Fragment() {
         sharepref = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
 
         binding.btnLogin.setOnClickListener {
-//            val email = binding.etEmaillogin.text.toString()
-//            val password = binding.etPasswordlogin.text.toString()
-//            auth(email,password)
             if (binding.etEmaillogin.text.toString().isEmpty()) {
                 binding.etEmaillogin.setError("Isi Username")
             } else if (binding.etPasswordlogin.text.toString().isEmpty()) {
@@ -68,63 +65,6 @@ class LoginFragment : Fragment() {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment2)
         }
     }
-
-//    private fun auth(email: String, password: String) {
-//        RetrofitClient.instance.getAllUser()
-//            .enqueue(object : Callback<List<DataUsersResponseItem>> {
-//                override fun onResponse(
-//                    call: Call<List<DataUsersResponseItem>>,
-//                    response: Response<List<DataUsersResponseItem>>,
-//                ) {
-//                    if (response.isSuccessful){
-//                        val resBody = response.body()
-//                        var loginSuccessful = false
-//                        var a = 1
-//                        if (resBody != null){
-//                            Log.d(tag,"RESPONSE : ${resBody.toString()}")
-//                            for (i in 0 until resBody.size) {
-//                                val tampung : Boolean = (resBody[i].email.equals(email) && resBody[i].password.equals(password)) == true
-//
-//                                if (tampung) {
-//                                    // ...
-//                                    loginSuccessful = true // Set variabel loginSuccessful menjadi true
-//                                    break // Keluar dari loop setelah login berhasil
-//                                    a = i
-//                                }
-//                            }
-//                                    if(loginSuccessful) {
-//                                    var addData = sharepref.edit()
-//                                    addData.putString("email", resBody[a].email)
-//                                    addData.putString("username",resBody[a].name)
-//                                    addData.putString("password",resBody[a].password)
-//                                    addData.putString("id",resBody[a].idUsers)
-//                                    addData.apply()
-//                                    // Clear error text
-//                                    binding.etPasswordlogin.error = null
-//                                    binding.etEmaillogin.error = null
-//
-//                                    Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment)
-//                                    Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
-//                                } else {
-//                                    // Set error text
-//                                    binding.etPasswordlogin.error = "Password Tidak Sesuai"
-//                                    binding.etEmaillogin.error ="Email Tidak Sesuai"
-//                                    Toast.makeText(context, "Invalid Username or Password", Toast.LENGTH_SHORT).show()
-//                                }
-//                            }
-//
-//                    }else{
-//                        Toast.makeText(context, "Gagal Load Data", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<List<DataUsersResponseItem>>, t: Throwable) {
-//                    Toast.makeText(context, "Kesalahan", Toast.LENGTH_SHORT).show()
-//                }
-//
-//            })
-//    }
-
 
     lateinit var listuserlogin: List<DataUsersResponseItem>
     private fun forLogin() {
@@ -170,18 +110,5 @@ class LoginFragment : Fragment() {
         sharedPref.putString("id", currentUser.idUsers)
         sharedPref.apply()
         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-
-        //some code to fix destination error
-        /*error : java.lang.IllegalArgumentException: Navigation action/destination
-        a cannot be found from the current destination Destination(id/loginFragment) label=Home
-        class=com.sample.store.main.dashboard.ui.ui.home.mainui.HomeFragment*/
-//        val currentDestinationIsLogin = this.findNavController().currentDestination == this.findNavController().findDestination(R.id.loginFragment)
-//        val currentDestinationIsMainHomeFragment = this.findNavController().currentDestination == this.findNavController().findDestination(R.id.homeFragment)
-//
-//        if(currentDestinationIsLogin && !currentDestinationIsMainHomeFragment){
-//            Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_homeFragment)
-//        }
-
-
     }
 }

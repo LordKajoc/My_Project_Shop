@@ -17,12 +17,6 @@ class FavouriteAdapter(private var listFav: List<DataFavProductResponseItem>) :
     class ViewHolder(var binding: ItemFavoriteBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindFav(itemCart: DataFavProductResponseItem) {
             binding.favorite= itemCart
-//            binding.cardView.setOnClickListener {
-//                val bundle = Bundle().apply {
-//                    putInt("ID", itemCart.idFav.toInt())
-//                }
-//                it.findNavController().navigate(R.id.action_favoriteFragment_to_detailProductFragment, bundle)
-//            }
         }
     }
 

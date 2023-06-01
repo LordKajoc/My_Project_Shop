@@ -17,9 +17,9 @@ interface ApiService {
     fun getDetailNews(@Path("id") id:Int): Call<DataDetailNewsItem>
 
     //Get product and Detail on Click by Id
-    @GET("category_product/3/products")
+    @GET("category_product/4/products")
     fun getProduct(): Call<List<DataProductResponseItem>>
-    @GET("category_product/3/products/{id}")
+    @GET("category_product/4/products/{id}")
     fun getDetailProduct(@Path("id") id:String): Call<DataDetailProductItem>
 
     //Get User and All Data User for profile

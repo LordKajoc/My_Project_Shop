@@ -75,16 +75,6 @@ class HomeFragment : Fragment() {
     }
 
 
-//    @SuppressLint("NotifyDataSetChanged")
-//    fun getNews(){
-//        viewModelHomeVm = ViewModelProvider(this).get(HomeVm::class.java)
-//        viewModelHomeVm.getDataNews()
-//        viewModelHomeVm.liveDataNews.observe(viewLifecycleOwner, Observer{
-//            binding.rvconNews.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-//            binding.rvconNews.adapter = NewsAdapter(it)
-//        })
-//    }
-
     override fun onStart() {
         super.onStart()
         sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)

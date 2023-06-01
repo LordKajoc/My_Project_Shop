@@ -48,7 +48,6 @@ class ProfileFragment : Fragment() {
         binding.btnupdateprofile.setOnClickListener {
             updateUserProfile()
             activity?.onBackPressed()
-//            findNavController().navigate(R.id.action_profileFragment_to_homeFragment)
         }
 
         binding.btnLogout.setOnClickListener {
