@@ -47,6 +47,13 @@
                 android:text="@{`Rp ` + cart.price}"
                 android:textColor="@color/teal_700" />
 
+            <ImageView
+                android:id="@+id/deleteCart"
+                android:src="@drawable/baseline_delete_24"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

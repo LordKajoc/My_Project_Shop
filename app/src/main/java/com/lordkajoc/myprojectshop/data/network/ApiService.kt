@@ -66,4 +66,10 @@ interface ApiService {
     fun getCart(
         @Path("id") id: String
     ): Call<List<DataCartResponseItem>>
+
+    @DELETE("users/{id}/cart/{idCart}")
+    fun deleteCart(
+        @Path("id") id:String,
+        @Path("idCart") idCart : String
+    ):Call<Unit>
 }

@@ -58,4 +58,28 @@ class CartViewModel@Inject constructor(private val Client: ApiService) : ViewMod
 
         })
     }
+
+    private val liveDataDeleteCart: MutableLiveData<Boolean> =
+        MutableLiveData()
+    val dataDeleteCart: LiveData<Boolean> get() = liveDataDeleteCart
+
+    fun deleteCart(idUser: String, idCart: String){
+        Client.deleteCart(idUser, idCart).enqueue(object : Callback<Unit> {
+            override fun onResponse(
+                call: Call<Unit>,
+                response: Response<Unit>
+            ) {
+                if (response.isSuccessful){
+                    liveDataDeleteCart.postValue(true)
+                }else{
+                    liveDataDeleteCart.postValue(false)
+                }
+            }
+
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
+                liveDataDeleteCart.postValue(false)
+            }
+
+        })
+    }
 }
