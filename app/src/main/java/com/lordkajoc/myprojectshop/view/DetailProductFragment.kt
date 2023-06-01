@@ -31,17 +31,17 @@ class DetailProductFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var favViewModel: FavoriteViewModel
     private lateinit var cartViewModel: CartViewModel
-    private lateinit var profileViewModel : ProfileViewModel
-    private lateinit var idUser :String
-    private lateinit var idProduct :String
-    private lateinit var idFav: String
+    private lateinit var profileViewModel: ProfileViewModel
+    private lateinit var idUser: String
+    private lateinit var idProduct: String
+    private var idFav: String? = null
 
     private lateinit var sharedPreferences: SharedPreferences
 
-    private lateinit var selectedCart : DataCartResponseItem
+    private lateinit var selectedCart: DataCartResponseItem
     private lateinit var selectedProduct: DataFavProductResponseItem
-    private lateinit var dataFav :DataFavProductResponseItem
-    private var isFavorite by Delegates.notNull<Boolean>()
+    private lateinit var dataFav: DataFavProductResponseItem
+    private var isFavorite = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,17 +54,21 @@ class DetailProductFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        sharedPreferences =
+            requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val getiiuser = sharedPreferences.getString("id", "").toString()
         favViewModel = ViewModelProvider(this).get(FavoriteViewModel::class.java)
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         profileViewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
+        cartViewModel = ViewModelProvider(this).get(CartViewModel::class.java)
 
         var getData = arguments?.getSerializable("ID") as DataProductResponseItem
         idProduct = getData.idProduct
-        binding.tvDetail.text = idProduct
+        binding.tvDetail.text = getiiuser
         if (idProduct != null) {
             viewModel.getProductById(idProduct)
             observeDetailProduct()
+//            checkFavorite()
             //test crashlytics
             binding.btnCrashdetail.setOnClickListener {
                 throw RuntimeException("Test Crash") // Force a crash
@@ -73,63 +77,54 @@ class DetailProductFragment : Fragment() {
     }
 
     private fun observeDetailProduct() {
-        viewModel.detailProduct.observe(viewLifecycleOwner) {
+        viewModel.detailProduct.observe(viewLifecycleOwner) { detailproduct ->
             binding.apply {
-                if (it != null) {
-                    binding.tvNamaproductdetail.text = it.name.toString()
-                    binding.tvReleaseproductdetail.text = "Release: " + it.createdAt.toString()
+                if (detailproduct != null) {
+                    binding.tvNamaproductdetail.text = detailproduct.name
+                    binding.tvReleaseproductdetail.text = "Release: " + detailproduct.createdAt
                     Glide.with(requireContext())
-                        .load("${it.productImage}")
+                        .load("${detailproduct.productImage}")
                         .into(binding.ivProductimagedetail)
                     //        binding.tvSinopsisfilmdetail.text = """Overview:
 //            ${getfilm.overview}
 //        """.trimIndent()
                     binding.tvDescriptionproductdetail.text = """Description:
                         |
-                    """.trimMargin() + it.description.toString()
-
-                    sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
-                    idUser = sharedPreferences.getString("id","").toString()
-                    selectedProduct = DataFavProductResponseItem(
-                        it.createdAt!!,
-                        it.description!!,
-                        it.idProduct!!,
-                        it.name!!,
-                        it.price!!,
-                        it.productImage!!,
-                        idUser
-                    )
-                    getPostCart(idUser, it)
-                    checkFavorite(selectedProduct.idFav)
-                    setFavoriteListener(selectedProduct.userId,selectedProduct.idFav, it)
-                    selectedCart = DataCartResponseItem(
-                        it.createdAt!!,
-                        it.description!!,
-                        it.idProduct!!,
-                        it.name!!,
-                        it.price!!,
-                        it.productImage!!,
-                        idUser
-                    )
+                    """.trimMargin() + detailproduct.description.toString()
                 }
+                //check is prodcut in favorite
+                sharedPreferences =
+                    requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+                val idUserforDetail = sharedPreferences.getString("id", "").toString()
+                favViewModel.getFav(idUserforDetail)
+                favViewModel.dataFav.observe(viewLifecycleOwner) { favproduct ->
+                    for (i in favproduct.indices) {
+                        if (favproduct[i].name == detailproduct.name) {
+                            isFavorite = true
+                            binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
+                            idFav = favproduct[i].idFav
+                            break
+                        } else {
+                            isFavorite = false
+                            binding.icFav.setImageResource(R.drawable.ic_favorite_outline)
+                        }
+                    }
+                }
+                setFavoriteListener()
+
             }
         }
     }
 
-//    fun getDataProfile() {
-//        profileViewModel.getProfileById(idUser)
-//    }
-
-    private fun setFavoriteListener(idUser: String, idProduct:String,fav : DataDetailProductItem) {
+    private fun setFavoriteListener() {
         binding.icFav.apply {
             setOnClickListener {
-                isFavorite =
-                    if (!isFavorite) {
-                    addToFavorite(idUser, fav)
+                isFavorite = if (!isFavorite) {
+                    addItemfavorite()
                     binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
                     true
                 } else {
-                    deleteFromFavorite(idProduct)
+                    deleteFromFavorite()
                     binding.icFav.setImageResource(R.drawable.ic_favorite_outline)
                     false
                 }
@@ -137,22 +132,47 @@ class DetailProductFragment : Fragment() {
         }
     }
 
-//    private lateinit var id : String
-    private fun addToFavorite(userId:String,fav: DataDetailProductItem) {
-        favViewModel.postFav(userId,fav)
-        favViewModel.dataPostFav.observe(viewLifecycleOwner) {
+    private fun addToFavorite(
+        id: String,
+        name: String,
+        productImage: String,
+        price: Int,
+        desc: String
+    ) {
+        favViewModel.postFavouriteProducts(id, name, productImage, price, desc)
+        favViewModel.getProductFavorite.observe(requireActivity()) {
             if (it != null) {
-                Toast.makeText(requireContext(), "Sukses tambah favorit", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Failed menambah favorit", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(
+                    requireContext(),
+                    "Berhasil menambahkan ke favorit",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+        }
+
+    }
+
+    private fun addItemfavorite() {
+        sharedPreferences =
+            requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val idUser = sharedPreferences.getString("id", "").toString()
+        viewModel.detailProduct.observe(viewLifecycleOwner) {
+            val name = it.name
+            val productImage = it.productImage
+            val price = it.price.toInt()
+            val desc = it.description
+            val id = idUser
+            addToFavorite(id, name, productImage, price, desc)
+            binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
         }
     }
 
-    private fun deleteFromFavorite(favId:String) {
-        favViewModel.deleteFav(favId)
-        favViewModel.dataDeleteFav.observe(viewLifecycleOwner) {
+    private fun deleteFromFavorite() {
+        sharedPreferences =
+            requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val idUser = sharedPreferences.getString("id", "").toString()
+        favViewModel.deleteFavProducts(idUser, idFav!!)
+        favViewModel.delProductFavorite.observe(viewLifecycleOwner) {
             if (it != null) {
                 Toast.makeText(requireContext(), "Sukses menghapus favorit", Toast.LENGTH_SHORT)
                     .show()
@@ -163,15 +183,19 @@ class DetailProductFragment : Fragment() {
         }
     }
 
-    private fun checkFavorite(favId: String) {
-        favViewModel.checkFav(favId)
-       favViewModel.dataCheckFav.observe(viewLifecycleOwner) {
-            if (it != null) {
-                if (it) {
-                    isFavorite = true
+    private fun checkFavorite() {
+        sharedPreferences =
+            requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val idUser = sharedPreferences.getString("id", "").toString()
+        favViewModel.checkFav(idUser, idFav!!)
+        favViewModel.loadData.observe(viewLifecycleOwner) {
+            if (it) {
+                isFavorite = !isFavorite
+                if (isFavorite) {
+                    addItemfavorite()
                     binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
                 } else {
-                    isFavorite = false
+                    deleteFromFavorite()
                     binding.icFav.setImageResource(R.drawable.ic_favorite_outline)
                 }
             } else {
@@ -179,25 +203,152 @@ class DetailProductFragment : Fragment() {
             }
         }
     }
-    private fun addToCart(id: String,cart: DataDetailProductItem){
+
+    private fun addToCart(
+        id: String,
+        name: String,
+        productImage: String,
+        price: Int,
+        desc: String
+    ) {
         cartViewModel = ViewModelProvider(this).get(CartViewModel::class.java)
-        cartViewModel.postCart(id, cart)
-//        cartViewModel.postCart(cart = DataDetailProductItem("","","","","","",""))
-        cartViewModel.dataCart.observe(viewLifecycleOwner) {
+        cartViewModel.postCart(id, name, productImage, price, desc)
+    }
+
+    private fun addItemCart() {
+        sharedPreferences =
+            requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val idUser = sharedPreferences.getString("id", "").toString()
+        viewModel.detailProduct.observe(viewLifecycleOwner) {
+            val name = it.name
+            val productImage = it.productImage
+            val price = it.price.toInt()
+            val desc = it.description
+            val id = idUser
+            addToCart(id, name, productImage, price, desc)
             if (it != null) {
-                Toast.makeText(requireContext(), "Sukses tambah Cart", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Berhasil menambahkan ke cart", Toast.LENGTH_SHORT)
+                    .show()
             } else {
-                Toast.makeText(requireContext(), "Failed menambah Cart", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), "Gagal menambahkan ke cart", Toast.LENGTH_SHORT)
                     .show()
             }
         }
     }
-    private fun getPostCart(id:String, cart:DataDetailProductItem){
-        binding.icCart.apply {
-            setOnClickListener {
-                addToCart(id,cart)
-//                findNavController().navigate(R.id.action_detailProductFragment_to_cartFragment)
-            }
-        }
-    }
 }
+
+//    private fun addItemCart() {
+//        sharedPreferences =
+//            requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+//        val idUser = sharedPreferences.getString("id", "").toString()
+//        viewModel.detailProduct.observe(viewLifecycleOwner) {
+//            val name = it.name
+//            val productImage = it.productImage
+//            val price = it.price.toInt()
+//            val desc = it.description
+//            val id = idUser
+//            addToCart(id, name, productImage, price, desc)
+//        }
+//    }
+//    private fun addToCart(id: String, cart: DataDetailProductItem) {
+//        cartViewModel = ViewModelProvider(this).get(CartViewModel::class.java)
+//        cartViewModel.postCart(id, cart.name, cart.productImage,cart.price.toInt(),cart.description)
+////        cartViewModel.postCart(cart = DataDetailProductItem("","","","","","",""))
+//        cartViewModel.itemCart.observe(viewLifecycleOwner) {
+//            if (it != null) {
+//                Toast.makeText(requireContext(), "Sukses tambah Cart", Toast.LENGTH_SHORT)
+//                    .show()
+//            } else {
+//                Toast.makeText(requireContext(), "Failed menambah Cart", Toast.LENGTH_SHORT)
+//                    .show()
+//            }
+//        }
+//    }
+
+
+//
+//                idUser = sharedPreferences.getString("id", "").toString()
+//                selectedProduct = DataFavProductResponseItem(
+//                    it.createdAt!!,
+//                    it.description!!,
+//                    it.idProduct!!,
+//                    it.name!!,
+//                    it.price!!,
+//                    it.productImage!!,
+//                    idUser
+//                )
+//                getPostCart(idUser, it)
+//                checkFavorite(selectedProduct.idFav)
+//                setFavoriteListener()
+//                selectedCart = DataCartResponseItem(
+//                    it.createdAt!!,
+//                    it.description!!,
+//                    it.idProduct!!,
+//                    it.name!!,
+//                    it.price!!,
+//                    it.productImage!!,
+//                    idUser
+//                )
+//            }
+//        }
+//
+//
+////    fun getDataProfile() {
+////        profileViewModel.getProfileById(idUser)
+////    }
+//
+//        private fun setFavoriteListener() {
+//            sharedPreferences =
+//                requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+//            val idUser = sharedPreferences.getString("id", "").toString()
+//            binding.icFav.apply {
+//                setOnClickListener {
+//                    viewModel.detailProduct.observe(viewLifecycleOwner) {
+//                        isFavorite =
+//                            if (!isFavorite) {
+//                                val name = it.name
+//                                val productImage = it.productImage
+//                                val price = it.price.toInt()
+//                                val desc = it.description
+//                                val id = idUser
+//                                addToFavorite(id, name, productImage, price, desc)
+//                                binding.icFav.setImageResource(R.drawable.ic_favorite_filled)
+//                                true
+//                            } else {
+//                                deleteFromFavorite(idProduct)
+//                                binding.icFav.setImageResource(R.drawable.ic_favorite_outline)
+//                                false
+//                            }
+//                    }
+//
+//                }
+//            }
+//        }
+//
+//
+//
+//        //    private lateinit var id : String
+//        private fun addToFavorite(
+//            id: String,
+//            name: String,
+//            productImage: String,
+//            price: Int,
+//            desc: String
+//        ) {
+//            favViewModel.postFavouriteProducts(id, name, productImage, price, desc)
+//            favViewModel.productFavorite.observe(viewLifecycleOwner) {
+//                if (it != null) {
+//                    Toast.makeText(requireContext(), "Sukses tambah favorit", Toast.LENGTH_SHORT)
+//                        .show()
+//                } else {
+//                    Toast.makeText(requireContext(), "Failed menambah favorit", Toast.LENGTH_SHORT)
+//                        .show()
+//                }
+//            }
+//        }
+//
+//
+//
+//
+//    }
+//}

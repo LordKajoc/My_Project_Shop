@@ -43,7 +43,7 @@ class CartFragment : Fragment() {
     fun getDataCart(userId:String){
         vmCart = ViewModelProvider(this).get(CartViewModel::class.java)
         vmCart.getCart(userId)
-        vmCart.dataCart.observe(viewLifecycleOwner, Observer{
+        vmCart.dataListCart.observe(viewLifecycleOwner, Observer{
             binding.rvCart.layoutManager = LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL,false)
                 binding.rvCart.adapter = CartAdapter(it)
