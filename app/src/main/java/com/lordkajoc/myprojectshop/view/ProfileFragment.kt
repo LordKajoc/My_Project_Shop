@@ -46,12 +46,11 @@ class ProfileFragment : Fragment() {
         sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
         if (sharedPreferences.getString("id", "")!!.isEmpty()) {
             MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Logout")
-                .setMessage("Anda Yakin?")
+                .setTitle("Login")
+                .setMessage("Anda Belum Login")
                 .setCancelable(false)
                 .setNegativeButton("Cancel") { dialog, which ->
                     // Respond to negative button press
-                    dialog.cancel()
                     findNavController().navigate(R.id.action_profileFragment_to_homeFragment)
                 }
                 .setPositiveButton("Login") { dialog, which ->

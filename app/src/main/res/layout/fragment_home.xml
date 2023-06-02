@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
+    android:layout_margin="20dp"
     tools:context=".view.HomeFragment">
 
     <androidx.appcompat.widget.Toolbar
@@ -31,8 +31,6 @@
                 android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/baseline_add_shopping_cart_24" />
-
-
         </RelativeLayout>
 
 
@@ -41,7 +39,8 @@
         android:id="@+id/view_pager"
         android:layout_below="@id/tb_home"
         android:layout_width="match_parent"
-        android:layout_height="150dp" />
+        android:layout_height="150dp"
+        android:layout_marginTop="20dp"/>
 
 
     <TextView

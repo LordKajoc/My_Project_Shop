@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentCartBinding
 import com.lordkajoc.myprojectshop.databinding.FragmentFavoriteBinding
@@ -40,7 +42,24 @@ class FavoriteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
         idUser = sharedPreferences.getString("id","").toString()
-        getDataFav(idUser)
+        if (sharedPreferences.getString("id", "")!!.isEmpty()) {
+            binding.rvListFav.visibility = View.GONE
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Login")
+                .setMessage("Anda Belum Login")
+                .setCancelable(false)
+                .setNegativeButton("Cancel") { dialog, which ->
+                    // Respond to negative button press
+                    findNavController().navigate(R.id.action_favoriteFragment_to_homeFragment)
+                }
+                .setPositiveButton("Login") { dialog, which ->
+                    // Respond to positive button press
+                    findNavController().navigate(R.id.action_favoriteFragment_to_loginFragment)
+                }
+                .show()
+        } else if (sharedPreferences.getString("id", "")!!.isNotEmpty()) {
+            getDataFav(idUser)
+        }
     }
 
     fun getDataFav(userId: String){

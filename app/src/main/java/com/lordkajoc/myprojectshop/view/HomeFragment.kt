@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.lordkajoc.myprojectshop.R
 import com.lordkajoc.myprojectshop.databinding.FragmentHomeBinding
 import com.lordkajoc.myprojectshop.view.adapter.NewsAdapter
@@ -41,7 +42,24 @@ class HomeFragment : Fragment() {
         getProduct()
 
         binding.ivIcCart.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_cartFragment)
+            sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+            if (sharedPreferences.getString("id", "")!!.isEmpty()) {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Login")
+                    .setMessage("Anda Belum Login")
+                    .setCancelable(false)
+                    .setNegativeButton("Cancel") { dialog, which ->
+                        // Respond to negative button press
+                        dialog.cancel()
+                    }
+                    .setPositiveButton("Login") { dialog, which ->
+                        // Respond to positive button press
+                        findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
+                    }
+                    .show()
+            } else if (sharedPreferences.getString("id", "")!!.isNotEmpty()) {
+                findNavController().navigate(R.id.action_homeFragment_to_cartFragment)
+            }
         }
     }
     fun getSlider(){
