@@ -55,7 +55,6 @@ class DetailProductFragment : Fragment() {
 
         val getData = arguments?.getSerializable("ID") as DataProductResponseItem
         idProduct = getData.idProduct
-        binding.tvDetail.text = getiiuser
         viewModel.getProductById(idProduct)
         observeDetailProduct()
         checkUserLogin()
