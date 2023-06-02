@@ -46,12 +46,14 @@ class CartFragment : Fragment() {
         vmCart.dataListCart.observe(viewLifecycleOwner, Observer{
             binding.rvCart.layoutManager = LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL,false)
-                binding.rvCart.adapter = CartAdapter(it)
+                binding.rvCart.adapter = CartAdapter(it,vmCart)
         })
     }
 
     override fun onStart() {
         super.onStart()
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        val idUser = sharedPreferences.getString("id","").toString()
         getDataCart(idUser)
     }
 }

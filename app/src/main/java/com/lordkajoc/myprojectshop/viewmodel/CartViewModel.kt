@@ -8,6 +8,7 @@ import com.lordkajoc.myprojectshop.data.network.ApiService
 import com.lordkajoc.myprojectshop.model.DataCart
 import com.lordkajoc.myprojectshop.model.DataCartResponseItem
 import com.lordkajoc.myprojectshop.model.DataDetailProductItem
+import com.lordkajoc.myprojectshop.model.DataFavProductResponseItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -68,5 +69,31 @@ class CartViewModel @Inject constructor(private val Client: ApiService) : ViewMo
             }
 
         })
+    }
+
+    // get item favourite
+    private val delItemProductCart = MutableLiveData<DataCartResponseItem>()
+    val delProductCart: LiveData<DataCartResponseItem> = delItemProductCart
+    fun deleteCartProducts(userId: String, cartId: String) {
+        liveLoadData.value = true
+        Client.deleteCartProduct(userId, cartId)
+            .enqueue(object : Callback<DataCartResponseItem> {
+                override fun onResponse(
+                    call: Call<DataCartResponseItem>,
+                    response: Response<DataCartResponseItem>
+                ) {
+                    if (response.isSuccessful) {
+                        liveLoadData.value = false
+                        delItemProductCart.value = response.body()
+
+                    } else {
+                        liveLoadData.value = false
+                    }
+                }
+
+                override fun onFailure(call: Call<DataCartResponseItem>, t: Throwable) {
+                    liveLoadData.value = false
+                }
+            })
     }
 }

@@ -43,8 +43,26 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model = ViewModelProvider(this).get(ProfileViewModel::class.java)
+        sharedPreferences = requireContext().getSharedPreferences("LOGGED_IN", Context.MODE_PRIVATE)
+        if (sharedPreferences.getString("id", "")!!.isEmpty()) {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Logout")
+                .setMessage("Anda Yakin?")
+                .setCancelable(false)
+                .setNegativeButton("Cancel") { dialog, which ->
+                    // Respond to negative button press
+                    dialog.cancel()
+                    findNavController().navigate(R.id.action_profileFragment_to_homeFragment)
+                }
+                .setPositiveButton("Login") { dialog, which ->
+                    // Respond to positive button press
+                    findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+                }
+                .show()
+        } else if (sharedPreferences.getString("id", "")!!.isNotEmpty()) {
+            getDataProfile()
+        }
 
-        getDataProfile()
         binding.btnupdateprofile.setOnClickListener {
             updateUserProfile()
             activity?.onBackPressed()
@@ -52,7 +70,6 @@ class ProfileFragment : Fragment() {
 
         binding.btnLogout.setOnClickListener {
             logout()
-            activity?.onBackPressed()
         }
     }
 
@@ -70,8 +87,6 @@ class ProfileFragment : Fragment() {
                         .load(it.image)
                         .into(imageUserProfile)
                 }
-
-
             }
         }
     }
@@ -135,6 +150,7 @@ class ProfileFragment : Fragment() {
                 // Respond to positive button press
                 sharedPref.clear()
                 sharedPref.apply()
+                activity?.onBackPressed()
             }
             .show()
     }
