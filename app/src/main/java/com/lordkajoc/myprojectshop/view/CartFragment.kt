@@ -44,7 +44,7 @@ class CartFragment : Fragment() {
         idUser = sharedPreferences.getString("id","").toString()
         getDataCart(idUser)
         //deleteCart(idUser, idCart)
-
+// Setelah operasi delete
 
 
     }
